@@ -13,7 +13,7 @@ class TvSeriesSeasonsController with ChangeNotifier {
   final int tvSeriesID;
   int _selectedItem = 0;
   double listViewCurrentOffset = 0;
-
+  Map<int, List<SimpleTvSeriesEpisode>> seasonsAndEpisodes = {};
   List<SimpleTvSeriesEpisode> episodesList = [];
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
@@ -25,7 +25,8 @@ class TvSeriesSeasonsController with ChangeNotifier {
 
   TvSeriesSeasonsController(
       {required this.numberOfSeasons, required this.tvSeriesID}) {
-    fetchEpisodes(tvSeriesID: tvSeriesID, seasonNumber: _selectedItem+1);
+    
+    fetchEpisodes(tvSeriesID: tvSeriesID, seasonNumber: _selectedItem + 1);
   }
 
   @override
@@ -66,11 +67,18 @@ class TvSeriesSeasonsController with ChangeNotifier {
 
   void fetchEpisodes(
       {required int tvSeriesID, required int seasonNumber}) async {
-    final response = await _service.fetchEpisodes(
-        tvSeriesID: tvSeriesID, seasonNumber: seasonNumber);
-    if (response != null) {
-      //episodesList.addAll(response);
-      episodesList = response;
+    if ( seasonsAndEpisodes.containsKey(seasonNumber) == true) {
+      episodesList = seasonsAndEpisodes[seasonNumber]!;
+    } else {
+      final response = await _service.fetchEpisodes(
+          tvSeriesID: tvSeriesID, seasonNumber: seasonNumber);
+      if (response != null) {
+        //episodesList.addAll(response);
+        if (seasonsAndEpisodes.containsKey(seasonNumber) == false) {
+          episodesList = response;
+          seasonsAndEpisodes[seasonNumber] = episodesList;
+        }
+      }
     }
     notifyListeners();
   }
