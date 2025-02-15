@@ -1,0 +1,25 @@
+class StringConstants {
+  static const noOverview = "Currently there is no overview. Contact us.";
+  static const unknownName = "Unkown";
+  static const trendingWeek = "Trending This Week";
+  static const trendingToday ="Trending Today";
+  static const popularPeople = "Popular People";
+  static const cast = "Cast";
+  static const movie = "Movie";
+  static const tvSeries = "TV-Series";
+  static const tvSeriesEpisodeGuide = "EPISODE GUIDE";
+  static const tvSeriesEpisodes = "Episodes";
+  static const tvSeriesSeasons = "Seasons";
+  static const tvSeriesNoEpisodeName = "Unkown";
+  static const people = "People";
+  static const peopleGenderNonBinary = "Non-binary";
+  static const peopleGenderNotSpecified = "Not Specified";
+  static const peopleGenderFemale = "Female";
+  static const peopleGenderMale = "Male";
+  static const peopleDetailsKnownFor = "Known For";
+  static const peopleDetailsBirthday = "Birthday";
+  static const peopleDetailsDeathday = "Deathday";
+  static const peopleDetailsBiography = "Biography";
+  static const peopleDetailsPlaceOfBirth = "Place of Birth";
+  static const peopleDetailsGender = "Gender";
+}
