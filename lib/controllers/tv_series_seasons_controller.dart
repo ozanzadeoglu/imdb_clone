@@ -13,11 +13,12 @@ class TvSeriesSeasonsController with ChangeNotifier {
   final int tvSeriesID;
   int _selectedItem = 0;
   double listViewCurrentOffset = 0;
-  Map<int, List<SimpleTvSeriesEpisode>> seasonsAndEpisodes = {};
-  List<SimpleTvSeriesEpisode> episodesList = [];
+  Map<int, List<SimpleTvSeriesEpisode>?> seasonsAndEpisodes = {};
+  //List<SimpleTvSeriesEpisode> episodesList = [];
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
   final ITvSeriesService _service = TvSeriesService();
+  bool isFetching = false;
 
   int get selectedItem => _selectedItem;
   PageController get pageController => _pageController;
@@ -25,8 +26,7 @@ class TvSeriesSeasonsController with ChangeNotifier {
 
   TvSeriesSeasonsController(
       {required this.numberOfSeasons, required this.tvSeriesID}) {
-    
-    fetchEpisodes(tvSeriesID: tvSeriesID, seasonNumber: _selectedItem + 1);
+    //fetchEpisodes(seasonNumber: _selectedItem + 1);
   }
 
   @override
@@ -56,35 +56,57 @@ class TvSeriesSeasonsController with ChangeNotifier {
     BuildContext context,
   ) {
     if (5 <= numberOfSeasons &&
-        3 <= selectedItem &&
+        1 <= selectedItem &&
         selectedItem <= (numberOfSeasons - 3)) {
       final seasonBoxWidth = calculateSeasonBoxWidth(context);
-      if (3 <= selectedItem) {
+      if (2 <= selectedItem) {
         scrollController.jumpTo(seasonBoxWidth * (selectedItem - 2));
       }
     }
   }
 
-  void fetchEpisodes(
-      {required int tvSeriesID, required int seasonNumber}) async {
-    if ( seasonsAndEpisodes.containsKey(seasonNumber) == true) {
-      episodesList = seasonsAndEpisodes[seasonNumber]!;
+  void fetchEpisodes({required int seasonNumber}) async {
+    if (seasonsAndEpisodes.containsKey(seasonNumber) == true) {
+      return;
     } else {
-      final response = await _service.fetchEpisodes(
-          tvSeriesID: tvSeriesID, seasonNumber: seasonNumber);
-      if (response != null) {
-        //episodesList.addAll(response);
-        if (seasonsAndEpisodes.containsKey(seasonNumber) == false) {
-          episodesList = response;
-          seasonsAndEpisodes[seasonNumber] = episodesList;
-        }
-      }
+      isFetching = true;
+      notifyListeners();
+      seasonsAndEpisodes[seasonNumber] =
+          await _fetchEpisodesFromService(seasonNumber: seasonNumber);
+      isFetching = false;
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  void clearEpisodesList() {
-    episodesList = [];
-    notifyListeners();
+  //fetches adjacent seasons for better user experience. UPDATE: This function
+  //becomes a hindarance when user swipes between new screens fast, so I commented
+  //it out for now, I may return to creating a new solution.
+  // void preloadAdjacentSeaons(int seasonNumber) async {
+  //   if (seasonNumber < numberOfSeasons) {
+  //     final nextSeason = seasonNumber + 1;
+  //     if (!seasonsAndEpisodes.containsKey(nextSeason)) {
+  //       seasonsAndEpisodes[nextSeason] = await _fetchEpisodesFromService(seasonNumber: nextSeason);
+  //       print("fetched next $nextSeason");
+  //     }
+  //   }
+  //   if (seasonNumber > 1) {
+  //     final prevSeason = seasonNumber - 1;
+  //     if (!seasonsAndEpisodes.containsKey(prevSeason)) {
+  //       seasonsAndEpisodes[prevSeason] = await _fetchEpisodesFromService(seasonNumber: prevSeason);
+  //       print("fetched previous $prevSeason");
+  //     }
+  //   }
+  // }
+
+  //helper function to reduce code duplication this method is 
+  //used both in preloadAdjacentSeaons and fetchEpisodes
+  Future<List<SimpleTvSeriesEpisode>?> _fetchEpisodesFromService(
+      {required int seasonNumber}) async {
+    final response = await _service.fetchEpisodes(
+        tvSeriesID: tvSeriesID, seasonNumber: seasonNumber);
+    if (response != null) {
+      return response;
+    }
+    return null;
   }
 }

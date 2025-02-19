@@ -32,40 +32,29 @@ class _TvSeriesSeasonsViewState extends State<TvSeriesSeasonsView> {
   @override
   Widget build(BuildContext context) {
     final controller = context.read<TvSeriesSeasonsController>();
-    return Scaffold(  
+    return Scaffold(
       appBar: AppBar(
         title: Text(
             "${StringConstants.tvSeriesSeasons} (${controller.numberOfSeasons})"),
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: OtherSizes.tvSeriesSeasonsContainerHeight.value,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController,
-              itemCount: controller.numberOfSeasons,
-              itemBuilder: (context, index) {
-                return SeasonContainer(index: index);
-              },
-            ),
+          SeasonSelectionListView(
+            scrollController: _scrollController,
+            controller: controller,
           ),
           Expanded(
             child: PageView.builder(
-              controller: _pageController,
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.numberOfSeasons,
-              onPageChanged: (value) {
-                controller.changeSelectedBox(value);
-                controller.calculateSeasonNumberListViewOffset(context);
-                controller.clearEpisodesList();
-                controller.fetchEpisodes(
-                    tvSeriesID: controller.tvSeriesID, seasonNumber: value + 1);
-              },
-              itemBuilder: (context, index) {
-                return const EpisodeTileListView();
-              },
-            ),
+                controller: _pageController,
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.numberOfSeasons,
+                onPageChanged: (value) {
+                  controller.changeSelectedBox(value);
+                  controller.calculateSeasonNumberListViewOffset(context);
+                },
+                itemBuilder: (context, index) {
+                  return EpisodeTileListView(seasonNumber: index + 1);
+                }),
           ),
         ],
       ),
@@ -73,39 +62,73 @@ class _TvSeriesSeasonsViewState extends State<TvSeriesSeasonsView> {
   }
 }
 
-class EpisodeTileListView extends StatelessWidget {
-  const EpisodeTileListView({super.key});
+class SeasonSelectionListView extends StatelessWidget {
+  const SeasonSelectionListView({
+    super.key,
+    required ScrollController scrollController,
+    required this.controller,
+  }) : _scrollController = scrollController;
+
+  final ScrollController _scrollController;
+  final TvSeriesSeasonsController controller;
 
   @override
   Widget build(BuildContext context) {
-    final episodesList =
-        context.select<TvSeriesSeasonsController, List<SimpleTvSeriesEpisode>>(
-            (controller) => controller.episodesList);
+    return SizedBox(
+      height: OtherSizes.tvSeriesSeasonsContainerHeight.value,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        controller: _scrollController,
+        itemCount: controller.numberOfSeasons,
+        itemBuilder: (context, index) {
+          return SeasonContainer(index: index);
+        },
+      ),
+    );
+  }
+}
 
-    return episodesList.isNotEmpty
-        ? ListView.builder(
-            itemCount: episodesList.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      //Size(double.infinity, context.sized.height * 0.30),
-                      maxHeight: context.sized.height * 0.30,
-                      minHeight: context.sized.height * 0.10,
-                      maxWidth: double.infinity,
-                      minWidth: double.infinity,
-                    ),
-                    child: EpisodeTile(episode: episodesList[index], episodeNum: index),
-                  ),
-                  const Divider(),
-                ],
-              );
-            },
-          )
-        : const Center(
-            child: LoadingWidget(),
-          );
+class EpisodeTileListView extends StatelessWidget {
+  final int seasonNumber;
+  const EpisodeTileListView({super.key, required this.seasonNumber});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = context.read<TvSeriesSeasonsController>();
+    final List<SimpleTvSeriesEpisode>? episodesList =
+        context.select<TvSeriesSeasonsController, List<SimpleTvSeriesEpisode>?>(
+            (controller) => controller.seasonsAndEpisodes[seasonNumber]);
+    final bool isFetching = context.select<TvSeriesSeasonsController, bool>(
+        (controller) => controller.isFetching);
+
+    if(episodesList == null && isFetching == false){
+      //Used addPostFrameCallBack so fetchEpisodes called after widgets are built.
+      WidgetsBinding.instance
+        .addPostFrameCallback((_) =>controller.fetchEpisodes(seasonNumber: seasonNumber));  
+    }
+
+    return (!isFetching && episodesList != null) ? ListView.builder(
+      itemCount: episodesList.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: context.sized.height * 0.30,
+                minHeight: context.sized.height * 0.10,
+                maxWidth: double.infinity,
+                minWidth: double.infinity,
+              ),
+              child:
+                  EpisodeTile(episode: episodesList[index], episodeNum: index),
+            ),
+            const Divider(),
+          ],
+        );
+      },
+    ) : LoadingWidget();
+
+    
   }
 }
 
@@ -113,7 +136,8 @@ class EpisodeTile extends StatelessWidget {
   final SimpleTvSeriesEpisode episode;
   final int episodeNum;
 
-  const EpisodeTile({super.key, required this.episode, required this.episodeNum});
+  const EpisodeTile(
+      {super.key, required this.episode, required this.episodeNum});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +160,7 @@ class EpisodeTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${episodeNum+1}. ${episode.episodeName}",
+                Text("${episodeNum + 1}. ${episode.episodeName}",
                     style: Theme.of(context).textTheme.titleMedium),
                 SizedBox(height: Paddings.low.value),
                 Row(
@@ -145,11 +169,14 @@ class EpisodeTile extends StatelessWidget {
                       Icons.star,
                       color: ColorConstants.iconYellow,
                     ),
-                    Text((episode.episodeVoteAverage ?? 0.0).toStringAsFixed(1)),
+                    Text(
+                        (episode.episodeVoteAverage ?? 0.0).toStringAsFixed(1)),
                     SizedBox(width: Paddings.low.value),
                     Text(episode.airDate.toString()),
                     SizedBox(width: Paddings.low.value),
-                    episode.episodeRuntime != null  ? Text("${episode.episodeRuntime.toString()}m") : const SizedBox.shrink(),
+                    episode.episodeRuntime != null
+                        ? Text("${episode.episodeRuntime.toString()}m")
+                        : const SizedBox.shrink(),
                   ],
                 ),
                 SizedBox(height: Paddings.low.value),
