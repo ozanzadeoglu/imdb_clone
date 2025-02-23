@@ -106,8 +106,16 @@ class EpisodeTileListView extends StatelessWidget {
       WidgetsBinding.instance
         .addPostFrameCallback((_) =>controller.fetchEpisodes(seasonNumber: seasonNumber));  
     }
-
-    return (!isFetching && episodesList != null) ? ListView.builder(
+    
+    //TODO: When swapping action starts and target is an unfetched season,
+    //the current season which is fetched, rebuilts. This happens because of
+    //the isFetching variable which turns to true. Although the same isFetching
+    //variable is responsible for rebuilding the widget when fetching is done.
+    //although the episodesList variable is initialized using context.select,
+    //no notifiy is dispatch because although new data is added to but reference
+    //is unchanged. Check if this action creates an overhead using profile mode of
+    //debugging tool.
+    return (episodesList != null) ? ListView.builder(
       itemCount: episodesList.length,
       itemBuilder: (context, index) {
         return Column(
