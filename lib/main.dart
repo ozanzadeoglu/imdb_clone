@@ -17,12 +17,13 @@ import 'package:imdb_app/views/tv_series_details_view.dart';
 import 'package:imdb_app/views/tv_series_seasons_view.dart';
 import 'package:provider/provider.dart';
 
+import 'models/simple_list_tile_media_history.dart';
+
 void main() async {
   await Hive.initFlutter();
+  Hive.registerAdapter(SimpleListTileMediaHistoryAdapter());
   Hive.registerAdapter(SimpleListTileMediaAdapter());
-  var box = await Hive.openBox<Map<String, Object>>(BoxNames.resentSearchBox);
-  print("map");
-  print(box.toMap());
+  await Hive.openBox<SimpleListTileMediaHistory>(BoxNames.resentSearchBox);
   runApp(MyApp());
 }
 

@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:imdb_app/constants/box_names.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
 import 'package:imdb_app/network_manager/hive_service.dart';
 import 'package:imdb_app/network_manager/search_service.dart';
@@ -12,7 +10,7 @@ class SearchViewController with ChangeNotifier {
   Timer? _typingTimer;
   bool isFocused = false;
   List<SimpleListTileMedia>? listTileMediaList = [];
-  List<Map<String, Object>>? researchesList = [];
+  List<SimpleListTileMedia>? researchesList = [];
 
   final _service = SearchService();
   final _hiveService = HiveService();
@@ -58,13 +56,13 @@ class SearchViewController with ChangeNotifier {
   void fetchRecentSearches() {
     // print(_hiveService.getEverythingFromBox(BoxNames.resentSearchBox));
     researchesList =
-        (_hiveService.getEverythingFromBox(BoxNames.resentSearchBox) );
+        (_hiveService.getHistory());
     notifyListeners();
   }
 
   void clearRecentSearches() {
     researchesList = [];
-    _hiveService.clearBox(BoxNames.resentSearchBox);
+    _hiveService.clearBox();
     notifyListeners();
   }
 

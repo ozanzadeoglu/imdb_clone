@@ -116,7 +116,7 @@ class RecentSearchesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final itemList =
-        context.select<SearchViewController, List<Map<String, Object>>?>(
+        context.select<SearchViewController, List<SimpleListTileMedia>?>(
             (v) => v.researchesList);
     final vm = context.read<SearchViewController>();
     return Column(
@@ -157,7 +157,7 @@ class RecentSearchesView extends StatelessWidget {
               final item = itemList[index];
               return SizedBox(
                 height: context.sized.height * 0.13,
-                child: SearchListTile(item: item['data'] as SimpleListTileMedia),
+                child: SearchListTile(item:  item),
               );
             },
           ),

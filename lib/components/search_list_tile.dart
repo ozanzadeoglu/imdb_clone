@@ -105,7 +105,7 @@ class SearchListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        _hiveService.addToBox(BoxNames.resentSearchBox, item);
+        _hiveService.addToBox(item);
         navigation.launchDependingOnMediaType(
           mediaType: item.mediaType,
           mediaID: item.id,
