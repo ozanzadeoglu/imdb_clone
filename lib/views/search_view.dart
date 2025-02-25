@@ -4,12 +4,13 @@ import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/controllers/search_view_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
+import 'package:imdb_app/network_manager/hive_service.dart';
+import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
 
 class SearchView extends StatelessWidget {
   const SearchView({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class SearchView extends StatelessWidget {
         children: [
           SafeArea(child: CustomSearchBar()),
           Expanded(
-            child: isFocused ? SearchResultsListView() :RecentSearchesView(),
+            child: isFocused ? SearchResultsListView() : RecentSearchesView(),
           ),
         ],
       ),
@@ -54,7 +55,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   filled: true,
                   fillColor: Colors.white,
                   prefixIconColor: ColorConstants.thamarBlack,
-                  prefixIcon: Icon(Icons.search),),
+                  prefixIcon: Icon(Icons.search),
+                ),
                 controller: controller.textController,
                 focusNode: controller.textFieldFocusNode,
                 keyboardType: TextInputType.name,
@@ -89,7 +91,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 }
 
 class SearchResultsListView extends StatelessWidget {
-  const SearchResultsListView({super.key});
+  SearchResultsListView({super.key});
+
+  final navigation = NavigationUtils();
+  final hiveService = HiveService();
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +108,18 @@ class SearchResultsListView extends StatelessWidget {
         final item = itemList[index];
         return SizedBox(
           height: context.sized.height * 0.13,
-          child: SearchListTile(item: item),
+          child: SearchListTile(
+            item: item,
+            onTap: () {
+              hiveService.addToBox(item);
+              navigation.launchDependingOnMediaType(
+                mediaType: item.mediaType,
+                mediaID: item.id,
+                mediaTitle: item.name,
+                context: context,
+              );
+            },
+          ),
         );
       },
     );
@@ -111,7 +127,10 @@ class SearchResultsListView extends StatelessWidget {
 }
 
 class RecentSearchesView extends StatelessWidget {
-  const RecentSearchesView({super.key});
+  RecentSearchesView({super.key});
+
+  final navigation = NavigationUtils();
+  final hiveService = HiveService();
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +176,18 @@ class RecentSearchesView extends StatelessWidget {
               final item = itemList[index];
               return SizedBox(
                 height: context.sized.height * 0.13,
-                child: SearchListTile(item:  item),
+                child: SearchListTile(
+                  item: item,
+                  onTap: () {
+                    hiveService.addToBox(item);
+                    navigation.launchDependingOnMediaType(
+                      mediaType: item.mediaType,
+                      mediaID: item.id,
+                      mediaTitle: item.name,
+                      context: context,
+                    );
+                  },
+                ),
               );
             },
           ),

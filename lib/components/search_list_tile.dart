@@ -12,12 +12,42 @@ import 'package:imdb_app/utility/navigation_utils.dart';
 
 class SearchListTile extends StatelessWidget {
   final SimpleListTileMedia item;
-  SearchListTile({super.key, required this.item});
+  final VoidCallback? onTap;
+  const SearchListTile({super.key, required this.item, this.onTap});
 
-  final navigation = NavigationUtils();
-  final _hiveService = HiveService();
 
-  Column columnLayoutDependingMedia(
+
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: const BoxDecoration(
+            border: Border(
+                bottom: BorderSide(color: ColorConstants.kettleman))),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: Paddings.medium.value, vertical: Paddings.low.value),
+          child: Row(
+            children: [
+              AspectRatio(
+                aspectRatio: 1 / 1.5,
+                child: CustomPosterNetworkImage(path: item.posterPath),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(left: Paddings.low.value),
+                  child: columnLayoutDependingMedia(item, context),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+    Column columnLayoutDependingMedia(
       SimpleListTileMedia item, BuildContext context) {
     if (item.mediaType == MediaTypes.movie.value) {
       return Column(
@@ -99,43 +129,5 @@ class SearchListTile extends StatelessWidget {
       );
     }
     return const Column();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        _hiveService.addToBox(item);
-        navigation.launchDependingOnMediaType(
-          mediaType: item.mediaType,
-          mediaID: item.id,
-          mediaTitle: item.name,
-          context: context,
-        );
-      },
-      child: Container(
-        decoration: const BoxDecoration(
-            border: Border(
-                bottom: BorderSide(color: ColorConstants.kettleman))),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: Paddings.medium.value, vertical: Paddings.low.value),
-          child: Row(
-            children: [
-              AspectRatio(
-                aspectRatio: 1 / 1.5,
-                child: CustomPosterNetworkImage(path: item.posterPath),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsets.only(left: Paddings.low.value),
-                  child: columnLayoutDependingMedia(item, context),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
