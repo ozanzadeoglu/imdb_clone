@@ -33,7 +33,7 @@ class _SlideableGenreState extends State<SlideableGenre> {
 class _GenreContainer extends StatelessWidget {
   final String name;
   final int id;
-  const _GenreContainer({super.key, required this.id, required this.name});
+  const _GenreContainer({ required this.id, required this.name});
 
   @override
   Widget build(BuildContext context) {

@@ -114,38 +114,38 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                   ),
 
                   FutureBuilder(
-                      future: fetchCredits(movie.id!),
-                      builder: (context,
-                          AsyncSnapshot<List<SimpleCredit>?> snapshot) {
-                        if (snapshot.hasData ) {
-                          final actorList = snapshot.data;
-                          return PosterCardWrapper(
-                            title: StringConstants.cast,
-                            customListView: CustomListView(
-                              prototype: PosterCard.fromCredit(
-                                simpleCredit: actorList![0],
-                              ),
-                              listView: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: actorList.length,
-                                itemBuilder: (context, index) {
-                                  final actor = actorList[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                        right: Paddings.low.value),
-                                    child: PosterCard.fromCredit(
-                                      simpleCredit: actor,
-                                    ),
-                                  );
-                                },
-                              ),
+                    future: fetchCredits(movie.id!),
+                    builder:
+                        (context, AsyncSnapshot<List<SimpleCredit>?> snapshot) {
+                      if (snapshot.hasData) {
+                        final actorList = snapshot.data;
+                        return PosterCardWrapper(
+                          title: StringConstants.cast,
+                          customListView: CustomListView(
+                            prototype: PosterCard.fromCredit(
+                              simpleCredit: actorList![0],
                             ),
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
-                    ),
+                            listView: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: actorList.length,
+                              itemBuilder: (context, index) {
+                                final actor = actorList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      right: Paddings.low.value),
+                                  child: PosterCard.fromCredit(
+                                    simpleCredit: actor,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
                 ],
               ),
             );
@@ -160,7 +160,6 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
 
 class _ImageAndOverviewRow extends StatelessWidget {
   const _ImageAndOverviewRow({
-    super.key,
     required this.movie,
   });
 
@@ -196,7 +195,6 @@ class _ImageAndOverviewRow extends StatelessWidget {
 
 class _TitleAndInfoColumn extends StatelessWidget {
   const _TitleAndInfoColumn({
-    super.key,
     required this.movie,
   });
 
@@ -232,11 +230,11 @@ class _PopularityRow extends StatelessWidget {
   final double voteAverage;
   final int voteCount;
 
-  const _PopularityRow(
-      {super.key,
-      required this.popularity,
-      required this.voteAverage,
-      required this.voteCount});
+  const _PopularityRow({
+    required this.popularity,
+    required this.voteAverage,
+    required this.voteCount,
+  });
 
   @override
   Widget build(BuildContext context) {

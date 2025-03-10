@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:imdb_app/local_database_managers/hive_manager.dart';
+import 'package:imdb_app/local_database_managers/list_tile_media_manager.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
-import 'package:imdb_app/network_manager/hive_service.dart';
+import 'package:imdb_app/models/simple_list_tile_media_history.dart';
 import 'package:imdb_app/network_manager/search_service.dart';
 
 class SearchViewController with ChangeNotifier {
@@ -9,13 +11,14 @@ class SearchViewController with ChangeNotifier {
   late TextEditingController textController;
   Timer? _typingTimer;
   bool isFocused = false;
+  late IHiveManager<SimpleListTileMediaHistory> manager;
   List<SimpleListTileMedia>? listTileMediaList = [];
   List<SimpleListTileMedia>? researchesList = [];
 
   final _service = SearchService();
-  final _hiveService = HiveService();
 
   SearchViewController() {
+    manager = ListTileMediaManager();
     fetchRecentSearches();
     textFieldFocusNode = FocusNode();
     textFieldFocusNode.addListener((changeTextFieldFocus));
@@ -54,20 +57,28 @@ class SearchViewController with ChangeNotifier {
   }
 
   void fetchRecentSearches() {
-    // print(_hiveService.getEverythingFromBox(BoxNames.resentSearchBox));
-    researchesList =
-        (_hiveService.getHistory());
+    final entries = manager.fetchValues();
+    entries?.sort((a, b) => b.accessedAt.compareTo(a.accessedAt));
+    researchesList = entries?.map((entry) => entry.item).toList() ?? [];
     notifyListeners();
   }
 
   void clearRecentSearches() {
     researchesList = [];
-    _hiveService.clearBox();
+    manager.clearBox();
     notifyListeners();
   }
 
   void clearTextFieldText() {
     textController.clear();
     textFieldFocusNode.unfocus();
+  }
+
+  void addToHistory(SimpleListTileMedia item) async {
+    final key = '${item.mediaType}_${item.id}';
+   await  manager.putItem(
+      key,
+      SimpleListTileMediaHistory(item: item, accessedAt: DateTime.now()),
+    );
   }
 }

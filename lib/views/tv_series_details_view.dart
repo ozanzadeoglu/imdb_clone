@@ -166,10 +166,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
 }
 
 class _ImageAndOverviewRow extends StatelessWidget {
-  const _ImageAndOverviewRow({
-    super.key,
-    required this.tvSeries,
-  });
+  const _ImageAndOverviewRow({required this.tvSeries});
 
   final TVSeries tvSeries;
 
@@ -245,10 +242,7 @@ class _TitleAndInfoColumn extends StatelessWidget {
 }
 
 class _EpisodeGuideRow extends StatelessWidget {
-  const _EpisodeGuideRow({
-    super.key,
-    required this.tvSeries,
-  });
+  const _EpisodeGuideRow({required this.tvSeries});
 
   final TVSeries tvSeries;
 
@@ -295,11 +289,11 @@ class _PopularityRow extends StatelessWidget {
   final double voteAverage;
   final int voteCount;
 
-  const _PopularityRow(
-      {super.key,
-      required this.popularity,
-      required this.voteAverage,
-      required this.voteCount});
+  const _PopularityRow({
+    required this.popularity,
+    required this.voteAverage,
+    required this.voteCount,
+  });
 
   @override
   Widget build(BuildContext context) {

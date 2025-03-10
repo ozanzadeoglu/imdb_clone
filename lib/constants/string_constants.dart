@@ -22,4 +22,7 @@ class StringConstants {
   static const peopleDetailsBiography = "Biography";
   static const peopleDetailsPlaceOfBirth = "Place of Birth";
   static const peopleDetailsGender = "Gender";
+  static const recentSearches = "Recent Searches";
+  static const cancel = "Cancel";
+  static const clear = "Clear";
 }

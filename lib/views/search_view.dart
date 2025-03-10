@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/search_list_tile.dart';
+import 'package:imdb_app/components/custom_list_tile.dart';
 import 'package:imdb_app/constants/color_constants.dart';
+import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/controllers/search_view_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
-import 'package:imdb_app/network_manager/hive_service.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +76,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   ),
                 ),
                 onPressed: controller.clearTextFieldText,
-                child: Text("Cancel",
+                child: Text(StringConstants.cancel,
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall!
@@ -94,13 +94,14 @@ class SearchResultsListView extends StatelessWidget {
   SearchResultsListView({super.key});
 
   final navigation = NavigationUtils();
-  final hiveService = HiveService();
 
   @override
   Widget build(BuildContext context) {
     final itemList =
         context.select<SearchViewController, List<SimpleListTileMedia>?>(
             (v) => v.listTileMediaList);
+    final vm = context.read<SearchViewController>();
+
     return ListView.builder(
       padding: const EdgeInsets.all(0),
       itemCount: itemList!.length,
@@ -108,10 +109,10 @@ class SearchResultsListView extends StatelessWidget {
         final item = itemList[index];
         return SizedBox(
           height: context.sized.height * 0.13,
-          child: SearchListTile(
+          child: CustomListTile(
             item: item,
             onTap: () {
-              hiveService.addToBox(item);
+              vm.addToHistory(item);
               navigation.launchDependingOnMediaType(
                 mediaType: item.mediaType,
                 mediaID: item.id,
@@ -130,7 +131,6 @@ class RecentSearchesView extends StatelessWidget {
   RecentSearchesView({super.key});
 
   final navigation = NavigationUtils();
-  final hiveService = HiveService();
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +138,7 @@ class RecentSearchesView extends StatelessWidget {
         context.select<SearchViewController, List<SimpleListTileMedia>?>(
             (v) => v.researchesList);
     final vm = context.read<SearchViewController>();
+
     return Column(
       children: [
         Row(
@@ -145,7 +146,7 @@ class RecentSearchesView extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(left: Paddings.low.value),
-              child: Text("Recent Searches",
+              child: Text(StringConstants.recentSearches,
                   style: Theme.of(context).textTheme.titleLarge),
             ),
             Padding(
@@ -159,7 +160,7 @@ class RecentSearchesView extends StatelessWidget {
                     ),
                   ),
                 ),
-                child: Text("Clear",
+                child: Text(StringConstants.clear,
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
@@ -176,10 +177,10 @@ class RecentSearchesView extends StatelessWidget {
               final item = itemList[index];
               return SizedBox(
                 height: context.sized.height * 0.13,
-                child: SearchListTile(
+                child: CustomListTile(
                   item: item,
                   onTap: () {
-                    hiveService.addToBox(item);
+                    vm.addToHistory(item);
                     navigation.launchDependingOnMediaType(
                       mediaType: item.mediaType,
                       mediaID: item.id,
