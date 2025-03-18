@@ -17,14 +17,33 @@ class SearchView extends StatelessWidget {
     final isFocused =
         context.select<SearchViewController, bool>((c) => c.isFocused);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          SafeArea(child: CustomSearchBar()),
-          Expanded(
-            child: isFocused ? SearchResultsListView() : RecentSearchesView(),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        //backgroundColor: Colors.black,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: false,
+          titleSpacing: 0,
+          toolbarHeight: kToolbarHeight + 18,
+          title: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              8, 6, 8 , 12
+            ),
+            child: CustomSearchBar(),
           ),
-        ],
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              //CustomSearchBar(),
+              Expanded(
+                child:
+                    isFocused ? SearchResultsListView() : RecentSearchesView(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -44,29 +63,27 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     return Container(
       color: ColorConstants.offBlack,
       child: Row(
+        mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
-            flex: 8,
-            child: Padding(
-              padding: EdgeInsets.all(Paddings.medium.value),
-              child: TextField(
-                style: TextStyle(color: Colors.black),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIconColor: ColorConstants.thamarBlack,
-                  prefixIcon: Icon(Icons.search),
-                ),
-                controller: controller.textController,
-                focusNode: controller.textFieldFocusNode,
-                keyboardType: TextInputType.name,
+            flex: 3,
+            child: TextField(
+              style: TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                prefixIconColor: ColorConstants.thamarBlack,
+                prefixIcon: Icon(Icons.search),
               ),
+              controller: controller.textController,
+              focusNode: controller.textFieldFocusNode,
+              keyboardType: TextInputType.name,
             ),
           ),
           Expanded(
-            flex: 2,
-            child: AspectRatio(
-              aspectRatio: 1 / 1,
+            flex: 1,
+            child: SizedBox(
+              height: kToolbarHeight,
               child: TextButton(
                 style: ButtonStyle(
                   shape: WidgetStateProperty.all(
@@ -79,7 +96,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 child: Text(StringConstants.cancel,
                     style: Theme.of(context)
                         .textTheme
-                        .titleSmall!
+                        .titleMedium!
                         .copyWith(color: ColorConstants.iconYellow)),
               ),
             ),
