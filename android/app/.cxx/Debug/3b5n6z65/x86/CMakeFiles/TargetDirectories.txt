@@ -1,0 +1,2 @@
+C:/code/flutter/imdb_app/android/app/.cxx/Debug/3b5n6z65/x86/CMakeFiles/edit_cache.dir
+C:/code/flutter/imdb_app/android/app/.cxx/Debug/3b5n6z65/x86/CMakeFiles/rebuild_cache.dir
