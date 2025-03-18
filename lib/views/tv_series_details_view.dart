@@ -53,6 +53,8 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mq = MediaQuery.of(context);
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.tvSeriesName), centerTitle: false),
       body: FutureBuilder(
@@ -71,27 +73,27 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                     ),
                     child: _TitleAndInfoColumn(tvSeries: tvSeries!),
                   ),
-                  
                   _EpisodeGuideRow(tvSeries: tvSeries),
-
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: 0,
-                      minHeight: 0,
-                      maxHeight: context.sized.width / 1.7777,
-                      maxWidth: context.sized.width,
-                    ),
-                    child:
-                        CustomBackdropNetworkImage(path: tvSeries.backdropPath),
-                  ),
-
+                  mq.orientation == Orientation.portrait
+                      ?
+                      //show backdrop only when device is on portrait mode.
+                      ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: 0,
+                            minHeight: 0,
+                            maxHeight: context.sized.width / 1.7777,
+                            maxWidth: context.sized.width,
+                          ),
+                          child: CustomBackdropNetworkImage(
+                              path: tvSeries.backdropPath),
+                        )
+                      : SizedBox.shrink(),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.low.value),
                     child: _ImageAndOverviewRow(tvSeries: tvSeries),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -101,7 +103,6 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                       child: SlideableGenre(genreList: tvSeries.genres!),
                     ),
                   ),
-                  
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),

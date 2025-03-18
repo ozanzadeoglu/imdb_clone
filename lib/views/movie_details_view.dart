@@ -51,6 +51,8 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mq = MediaQuery.of(context);
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.movieTitle), centerTitle: false),
       body: FutureBuilder(
@@ -62,6 +64,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -69,6 +72,8 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     child: _TitleAndInfoColumn(movie: movie!),
                   ),
 
+                  mq.orientation == Orientation.portrait ?
+                  //show backdrop only when device is on portrait mode. 
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       minWidth: 0,
@@ -77,7 +82,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                       maxWidth: context.sized.width,
                     ),
                     child: CustomBackdropNetworkImage(path: movie.backdropPath),
-                  ),
+                  ) : SizedBox.shrink(),
 
                   Padding(
                     padding: EdgeInsets.symmetric(
