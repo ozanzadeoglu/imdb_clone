@@ -71,15 +71,19 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                     ),
                     child: _TitleAndInfoColumn(tvSeries: tvSeries!),
                   ),
-
+                  
                   _EpisodeGuideRow(tvSeries: tvSeries),
 
-                  //inconsistent api, sometimes returns null sometimes empty string.
-                  //CustomBackDropNetworkImage would show no image available asset,
-                  //aim is to not display anything if there's no backdrop path.
-                  tvSeries.backdropPath == null || tvSeries.backdropPath == ""
-                      ? const SizedBox.shrink()
-                      : CustomBackdropNetworkImage(path: tvSeries.backdropPath),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                      maxHeight: context.sized.width / 1.7777,
+                      maxWidth: context.sized.width,
+                    ),
+                    child:
+                        CustomBackdropNetworkImage(path: tvSeries.backdropPath),
+                  ),
 
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -97,12 +101,11 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                       child: SlideableGenre(genreList: tvSeries.genres!),
                     ),
                   ),
-
+                  
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -112,12 +115,10 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                         voteAverage: tvSeries.voteAverage!,
                         voteCount: tvSeries.voteCount!),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-
                   castPosterCardListView(tvSeries),
                 ],
               ),

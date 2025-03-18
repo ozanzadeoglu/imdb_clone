@@ -42,10 +42,11 @@ class _HomePageViewState extends State<HomePageView> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
-           children: [
+          children: [
             SafeArea(
               child: SizedBox(
-                height: context.sized.width * 2/3 + context.sized.height * 0.05,
+                height:
+                    context.sized.width * 2 / 3 + context.sized.height * 0.05,
                 child: _topSlidingView(),
               ),
             ),
@@ -56,7 +57,7 @@ class _HomePageViewState extends State<HomePageView> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
               child: popularPeopleView(),
-            )
+            ),
           ],
         ),
       ),
@@ -182,6 +183,9 @@ class _CustomOnboardStack extends StatelessWidget {
         children: [
           Positioned(
             width: context.sized.width,
+            //api backdrop image resolution is 1.7, height is calculated
+            //depending on width.
+            height: context.sized.width / 1.7777,
             bottom: context.sized.height * 0.1,
             child: CustomBackdropNetworkImage(path: simpleMedia.backdropPath),
           ),

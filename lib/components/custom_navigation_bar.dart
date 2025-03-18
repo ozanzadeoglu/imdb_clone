@@ -7,7 +7,7 @@ class CustomNavigationBar extends StatelessWidget {
 
   const CustomNavigationBar({super.key, required this.currentRoute});
   final String homeLabel = "home";
-    final String searchLabel = "search";
+  final String searchLabel = "search";
 
 
   @override

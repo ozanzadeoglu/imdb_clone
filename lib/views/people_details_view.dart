@@ -34,7 +34,7 @@ class PeopleDetailsView extends StatelessWidget {
   Future<List<SimplePosterCardMedia>?> fetchKnownList() async {
     final response = await _service.fetchPeopleKnownFor(peopleName: peopleName);
 
-    if(response != null){
+    if (response != null) {
       return response;
     }
     return null;
@@ -61,7 +61,6 @@ class PeopleDetailsView extends StatelessWidget {
                     child: ExpanableBiographyContainer(
                         biography: people.biography),
                   ),
-                  
                   knownForPosterCardListView(),
                 ],
               ),
@@ -76,38 +75,36 @@ class PeopleDetailsView extends StatelessWidget {
 
   FutureBuilder<List<SimplePosterCardMedia>?> knownForPosterCardListView() {
     return FutureBuilder(
-                  future: fetchKnownList(),
-                  builder:
-                      (context, AsyncSnapshot<List<SimplePosterCardMedia>?> snapshot) {
-                    if (snapshot.hasData) {
-                      final knownForList = snapshot.data;
-                      return PosterCardWrapper(
-                        title: StringConstants.peopleDetailsKnownFor,
-                        customListView: CustomListView(
-                          prototype: PosterCard.fromSimplePosterCardMedia(
-                            media: knownForList![0],
-                          ),
-                          listView: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: knownForList.length,
-                            itemBuilder: (context, index) {
-                              final media = knownForList[index];
-                              return Padding(
-                                padding:
-                                    EdgeInsets.only(right: Paddings.low.value),
-                                child: PosterCard.fromSimplePosterCardMedia(
-                                  media: media,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                );
+      future: fetchKnownList(),
+      builder: (context, AsyncSnapshot<List<SimplePosterCardMedia>?> snapshot) {
+        if (snapshot.hasData) {
+          final knownForList = snapshot.data;
+          return PosterCardWrapper(
+            title: StringConstants.peopleDetailsKnownFor,
+            customListView: CustomListView(
+              prototype: PosterCard.fromSimplePosterCardMedia(
+                media: knownForList![0],
+              ),
+              listView: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: knownForList.length,
+                itemBuilder: (context, index) {
+                  final media = knownForList[index];
+                  return Padding(
+                    padding: EdgeInsets.only(right: Paddings.low.value),
+                    child: PosterCard.fromSimplePosterCardMedia(
+                      media: media,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
   }
 }
 
@@ -128,6 +125,9 @@ class ExpanableBiographyContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double containerHeight =
+        Theme.of(context).textTheme.titleLarge!.fontSize! + Paddings.low.value;
+
     return isBiographyEmpty()
         ? const SizedBox.shrink()
         : ExpandableNotifier(
@@ -136,7 +136,7 @@ class ExpanableBiographyContainer extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  height: context.sized.height * 0.03,
+                  height: containerHeight,
                   decoration: BoxDecoration(
                     color: ColorConstants.offBlack,
                     borderRadius: BorderRadius.vertical(
@@ -148,8 +148,8 @@ class ExpanableBiographyContainer extends StatelessWidget {
                     clipBehavior: Clip.none,
                     children: [
                       Positioned(
-                        bottom: context.sized.height * 0.01,
-                        child: descriptionContainer(context),
+                        bottom: containerHeight / 2,
+                        child: descriptionContainer(context, containerHeight),
                       ),
                     ],
                   ),
@@ -172,9 +172,9 @@ class ExpanableBiographyContainer extends StatelessWidget {
           );
   }
 
-  Container descriptionContainer(BuildContext context) {
+  Container descriptionContainer(BuildContext context, double containerHeight) {
     return Container(
-      height: context.sized.height * 0.04,
+      height: containerHeight,
       decoration: const ShapeDecoration(
           color: ColorConstants.iconYellow, shape: StadiumBorder()),
       child: Align(
@@ -270,11 +270,13 @@ class _ImageAndInfoRow extends StatelessWidget {
         : Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Flexible(
+              Expanded(
+                flex: 4,
                 child: Text("$field: ",
                     style: Theme.of(context).textTheme.bodyLarge),
               ),
-              Flexible(
+              Expanded(
+                flex: 6,
                 child: Text(
                   value!,
                   style: Theme.of(context)
@@ -300,6 +302,7 @@ class _ImageAndInfoRow extends StatelessWidget {
         SizedBox(width: context.sized.lowValue),
         Expanded(
           child: Column(
+            spacing: Paddings.lowlow.value,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(

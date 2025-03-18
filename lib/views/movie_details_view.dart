@@ -69,12 +69,15 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     child: _TitleAndInfoColumn(movie: movie!),
                   ),
 
-                  //inconsistent api, sometimes returns null sometimes empty string.
-                  //CustomBackDropNetworkImage would show no image available asset,
-                  //aim is to not display anything if there's no backdrop path.
-                  movie.backdropPath == null || movie.backdropPath == ""
-                      ? const SizedBox.shrink()
-                      : CustomBackdropNetworkImage(path: movie.backdropPath),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                      maxHeight: context.sized.width / 1.7777,
+                      maxWidth: context.sized.width,
+                    ),
+                    child: CustomBackdropNetworkImage(path: movie.backdropPath),
+                  ),
 
                   Padding(
                     padding: EdgeInsets.symmetric(

@@ -16,6 +16,7 @@ class _SlideableGenreState extends State<SlideableGenre> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      padding: EdgeInsets.all(0),
       shrinkWrap: true,
       itemCount: widget.genreList.length,
       scrollDirection: Axis.horizontal,
@@ -33,7 +34,7 @@ class _SlideableGenreState extends State<SlideableGenre> {
 class _GenreContainer extends StatelessWidget {
   final String name;
   final int id;
-  const _GenreContainer({ required this.id, required this.name});
+  const _GenreContainer({required this.id, required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +47,7 @@ class _GenreContainer extends StatelessWidget {
         alignment: Alignment.center,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: Paddings.low.value,
-            vertical: Paddings.lowlow.value
-          ),
+              horizontal: Paddings.low.value, vertical: Paddings.lowlow.value),
           child: Text(
             name,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
