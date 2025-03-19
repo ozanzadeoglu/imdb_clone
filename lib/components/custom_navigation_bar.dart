@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kartal/kartal.dart';
 
 class CustomNavigationBar extends StatelessWidget {
   final String currentRoute;
@@ -15,7 +14,7 @@ class CustomNavigationBar extends StatelessWidget {
     return BottomNavigationBar(   
       showSelectedLabels: false,
       showUnselectedLabels: false,
-      iconSize: context.sized.height * 0.04,
+      iconSize: 32,
       currentIndex: currentRoute.startsWith("/search") ? 1 : 0,
       onTap: (index) {
         if (index == 0) {
