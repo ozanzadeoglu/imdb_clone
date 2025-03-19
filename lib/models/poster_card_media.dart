@@ -1,11 +1,11 @@
-class SimplePosterCardMedia {
+class PosterCardMedia {
   final String? title;
   final int? id;
   final String? posterPath;
   final double? voteAverage;
   final String? mediaType;
 
-  SimplePosterCardMedia({
+  PosterCardMedia({
     this.title,
     this.id,
     this.posterPath,
@@ -13,8 +13,8 @@ class SimplePosterCardMedia {
     this.mediaType
   });
 
-    factory SimplePosterCardMedia.fromJson(Map<String, dynamic> json) {
-    return SimplePosterCardMedia(
+    factory PosterCardMedia.fromJson(Map<String, dynamic> json) {
+    return PosterCardMedia(
       title: json['name'] ?? json['title'],
       id: json['id'] as int?,
       posterPath: json['poster_path'] ?? json["profile_path"],
@@ -22,8 +22,8 @@ class SimplePosterCardMedia {
       mediaType: json['media_type'],
     );
   }
-      factory SimplePosterCardMedia.fromJsonWithType(Map<String, dynamic> json, String mediaType) {
-    return SimplePosterCardMedia(
+      factory PosterCardMedia.fromJsonWithType(Map<String, dynamic> json, String mediaType) {
+    return PosterCardMedia(
       title: json['name'] ?? json['title'],
       id: json['id'] as int?,
       posterPath: json['poster_path'] ?? json["profile_path"],
