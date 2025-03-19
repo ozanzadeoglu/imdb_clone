@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:imdb_app/enums/media_types.dart';
 import 'package:imdb_app/models/people.dart';
-import 'package:imdb_app/models/simple_postercard_media.dart';
+import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/network_manager/dio_client.dart';
 
 abstract class IPeopleService {
   Future<People?> fetchPeopleDetailsWithID({required int peopleID});
-  Future<List<SimplePosterCardMedia>?> fetchPeopleKnownFor(
+  Future<List<PosterCardMedia>?> fetchPeopleKnownFor(
       {required String peopleName});
-  Future<List<SimplePosterCardMedia>?> fetchPopularPeople();
+  Future<List<PosterCardMedia>?> fetchPopularPeople();
 }
 
 class PeopleService implements IPeopleService {
@@ -37,7 +37,7 @@ class PeopleService implements IPeopleService {
   //element which is supposedly the actor we're looking for then return his known_for
   //list to list of simplePosterCardMedia.
   @override
-  Future<List<SimplePosterCardMedia>?> fetchPeopleKnownFor(
+  Future<List<PosterCardMedia>?> fetchPeopleKnownFor(
       {required String peopleName}) async {
     try {
       var response = await _dio.get(
@@ -49,9 +49,9 @@ class PeopleService implements IPeopleService {
             as Map<String, dynamic>)["known_for"] as List;
 
         if (knownForList.isNotEmpty) {
-          List<SimplePosterCardMedia> simpleKnownForList =
-              List<SimplePosterCardMedia>.from(knownForList
-                  .map((item) => SimplePosterCardMedia.fromJson(item)));
+          List<PosterCardMedia> simpleKnownForList =
+              List<PosterCardMedia>.from(knownForList
+                  .map((item) => PosterCardMedia.fromJson(item)));
 
           return simpleKnownForList;
         }
@@ -65,7 +65,7 @@ class PeopleService implements IPeopleService {
   }
 
   @override
-  Future<List<SimplePosterCardMedia>?> fetchPopularPeople() async {
+  Future<List<PosterCardMedia>?> fetchPopularPeople() async {
     try {
       var response = await _dio.get(
         "${MediaTypes.person.value}/popular",
@@ -74,9 +74,9 @@ class PeopleService implements IPeopleService {
         var popularList = (response.data["results"] as List);
 
         if (popularList.isNotEmpty) {
-          List<SimplePosterCardMedia> simplepopularList =
-              List<SimplePosterCardMedia>.from(popularList.map((item) =>
-                  SimplePosterCardMedia.fromJsonWithType(
+          List<PosterCardMedia> simplepopularList =
+              List<PosterCardMedia>.from(popularList.map((item) =>
+                  PosterCardMedia.fromJsonWithType(
                       item, MediaTypes.person.value)));
 
           return simplepopularList;

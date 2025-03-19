@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:imdb_app/components/custom_backdrop_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
 import 'package:imdb_app/components/poster_card.dart';
-import 'package:imdb_app/components/custom_listview.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/grey_info_label.dart';
 import 'package:imdb_app/components/poster_card_wrapper.dart';
@@ -129,25 +128,20 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         final actorList = snapshot.data;
                         return PosterCardWrapper(
                           title: StringConstants.cast,
-                          customListView: CustomListView(
-                            prototype: PosterCard.fromCredit(
-                              simpleCredit: actorList![0],
-                            ),
-                            listView: ListView.builder(
+                          listView: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: actorList.length,
+                              itemCount: actorList?.length,
                               itemBuilder: (context, index) {
-                                final actor = actorList[index];
-                                return Padding(
+                                final actor = actorList?[index];
+                                return actor != null ? Padding(
                                   padding: EdgeInsets.only(
                                       right: Paddings.low.value),
                                   child: PosterCard.fromCredit(
                                     simpleCredit: actor,
                                   ),
-                                );
+                                ): const SizedBox.shrink();
                               },
                             ),
-                          ),
                         );
                       } else {
                         return const SizedBox.shrink();

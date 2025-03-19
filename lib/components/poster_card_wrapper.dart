@@ -1,51 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/custom_listview.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/enums/icon_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 
-class PosterCardWrapper extends StatelessWidget {
+class PosterCardWrapper<T> extends StatelessWidget {
   final String title;
   final String? description;
-  final CustomListView customListView;
-
+  final ListView listView;
   const PosterCardWrapper({
     super.key,
     required this.title,
     this.description,
-    required this.customListView,
+    required this.listView,
+    //required this.mediaType
   });
 
-  //List<String> buttonOptions = ["day", "week"];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: ColorConstants.thamarBlack,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: Paddings.lowHigh.value, vertical: Paddings.low.value),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(right: Paddings.low.value),
-                  child: const _TitleIcon(),
-                ),
-                Text(title, style: Theme.of(context).textTheme.headlineLarge),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 18.0),
-              child: _DescriptionText(description: description),
-            ),
-
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                child: customListView),
-          ],
+    return SafeArea(
+      top: false,
+      child: Container(
+        color: ColorConstants.thamarBlack,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: Paddings.lowHigh.value, vertical: Paddings.low.value),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: Paddings.low.value),
+                    child: const _TitleIcon(),
+                  ),
+                  Text(title, style: Theme.of(context).textTheme.headlineLarge),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 18.0),
+                child: _DescriptionText(description: description),
+              ),
+      
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
+                  child: SizedBox(
+                    height: 350, //326
+                    child: listView,
+                  )),
+            ],
+          ),
         ),
       ),
     );

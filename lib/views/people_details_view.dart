@@ -1,6 +1,5 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/custom_listview.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
 import 'package:imdb_app/components/poster_card.dart';
@@ -10,7 +9,7 @@ import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/image_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/people.dart';
-import 'package:imdb_app/models/simple_postercard_media.dart';
+import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/network_manager/people_service.dart';
 import 'package:kartal/kartal.dart';
 
@@ -31,7 +30,7 @@ class PeopleDetailsView extends StatelessWidget {
     return null;
   }
 
-  Future<List<SimplePosterCardMedia>?> fetchKnownList() async {
+  Future<List<PosterCardMedia>?> fetchKnownList() async {
     final response = await _service.fetchPeopleKnownFor(peopleName: peopleName);
 
     if (response != null) {
@@ -73,31 +72,26 @@ class PeopleDetailsView extends StatelessWidget {
     );
   }
 
-  FutureBuilder<List<SimplePosterCardMedia>?> knownForPosterCardListView() {
+  FutureBuilder<List<PosterCardMedia>?> knownForPosterCardListView() {
     return FutureBuilder(
       future: fetchKnownList(),
-      builder: (context, AsyncSnapshot<List<SimplePosterCardMedia>?> snapshot) {
+      builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final knownForList = snapshot.data;
           return PosterCardWrapper(
             title: StringConstants.peopleDetailsKnownFor,
-            customListView: CustomListView(
-              prototype: PosterCard.fromSimplePosterCardMedia(
-                media: knownForList![0],
-              ),
-              listView: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: knownForList.length,
-                itemBuilder: (context, index) {
-                  final media = knownForList[index];
-                  return Padding(
-                    padding: EdgeInsets.only(right: Paddings.low.value),
-                    child: PosterCard.fromSimplePosterCardMedia(
-                      media: media,
-                    ),
-                  );
-                },
-              ),
+            listView: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: knownForList?.length,
+              itemBuilder: (context, index) {
+                final media = knownForList?[index];
+                return media != null ? Padding(
+                  padding: EdgeInsets.only(right: Paddings.low.value),
+                  child: PosterCard.fromSimplePosterCardMedia(
+                    media: media,
+                  ),
+                ) : const SizedBox.shrink();
+              },
             ),
           );
         } else {

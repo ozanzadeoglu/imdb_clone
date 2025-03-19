@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
-import 'package:imdb_app/enums/image_sizes.dart';
 import 'package:imdb_app/enums/media_types.dart';
-import 'package:imdb_app/enums/other_sizes.dart';
-import 'package:imdb_app/models/simple_postercard_media.dart';
+import 'package:imdb_app/enums/paddings.dart';
+import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 
@@ -37,14 +36,14 @@ class PosterCard extends StatelessWidget {
         rating = null;
 
   PosterCard.fromSimplePosterCardMedia(
-      {super.key, required SimplePosterCardMedia media})
+      {super.key, required PosterCardMedia media})
       : id = media.id,
         info = media.mediaType,
         imagePath = media.posterPath,
         title = media.title,
         mediaType = media.mediaType,
         rating = media.voteAverage;
-
+  
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -54,11 +53,13 @@ class PosterCard extends StatelessWidget {
         mediaID: id,
         mediaTitle: title,
       ),
+      //350 total
       child: SizedBox(
         //looked into imdb from chrome devtools, in phone views
         //width was 0.4 of the screen width and height of the image was
         // 3/2 of the width.
-        width: context.sized.width * ImageSizes.responsiveWidthMultiplier.value,
+        // height: 250,
+        width: 150, //context.sized.width * ImageSizes.responsiveWidthMultiplier.value,
         child: Container(
           decoration: BoxDecoration(
             color: ColorConstants.offBlack,
@@ -68,10 +69,11 @@ class PosterCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _PosterCardImage(imagePath: imagePath),
+              _PosterCardImage(imagePath: imagePath), //225
               Padding(
-                padding: EdgeInsets.all(context.sized.lowValue),
+                padding: EdgeInsets.all(Paddings.low.value), //16
                 child: _PosterCardInfoColumn(
+                  //98
                   title: title,
                   info: info,
                   rating: rating,
@@ -94,15 +96,16 @@ class _PosterCardImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.vertical(
           top: Radius.circular(context.sized.normalValue)),
-      child: SizedBox(
-          height: (context.sized.width *
-                  ImageSizes.responsiveWidthMultiplier.value) *
-              (3 / 2),
-          child: CustomPosterNetworkImage(path: imagePath)),
+      child: CustomPosterNetworkImage(
+        path: imagePath,
+        height: 225,
+        width: 150,
+      ),
     );
   }
 }
 
+//84 + 14
 //in devtools this components was a little bit weird. It took height
 //from its childeren but the text was wrapped in a box with 2.5rem height.
 //I'll look into textTheme's bodylarge's fon size and create a sizedbox
@@ -136,23 +139,28 @@ class _PosterCardInfoColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //final double posterCardRatingHeight = 24;
+    final double posterCardTitleBoxHeight = 48;
+
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PosterCardRating(rating: rating),
-        PosterCardTitleBox(
-          title: title,
-        ),
-        const SizedBox(
-          height: 12,
-        ),
+        PosterCardRating(rating: rating),//24
+        SizedBox(height: Paddings.lowlow.value),
+        SizedBox(height: posterCardTitleBoxHeight, child: PosterCardTitleBox(title: title)),
+        const SizedBox(height: 12),
         Text(changeInfoIfNeeded(info) ?? " ",
-            maxLines: 1, overflow: TextOverflow.ellipsis),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }
 }
 
+//48
 //poster card's title will be created here.
 //text wrapped by fixed height sizedbox so ui
 //will not depend on title length. e.g 1 line, 2 lines
@@ -161,19 +169,17 @@ class PosterCardTitleBox extends StatelessWidget {
   const PosterCardTitleBox({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: OtherSizes.posterCardTitleHeight.value,
-      child: Text(title ?? "",
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(color: Colors.white)),
-    );
+    return Text(title ?? "",
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context)
+            .textTheme
+            .bodyLarge!
+            .copyWith(color: Colors.white));
   }
 }
 
+//24
 class PosterCardRating extends StatelessWidget {
   final double? rating;
   const PosterCardRating({super.key, required this.rating});
@@ -182,15 +188,18 @@ class PosterCardRating extends StatelessWidget {
   Widget build(BuildContext context) {
     return rating == null
         ? const SizedBox.shrink()
-        : Row(
-            children: [
-              const Icon(Icons.star, color: ColorConstants.iconYellow),
-              Text(rating!.toStringAsFixed(1),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.white)),
-            ],
-          );
+        : SizedBox(
+          height: 24,
+          child: Row(
+              children: [
+                const Icon(Icons.star, color: ColorConstants.iconYellow),
+                Text(rating!.toStringAsFixed(1),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.white)),
+              ],
+            ),
+        );
   }
 }

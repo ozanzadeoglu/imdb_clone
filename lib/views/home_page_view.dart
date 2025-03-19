@@ -1,5 +1,4 @@
 import 'package:imdb_app/components/custom_backdrop_network_image.dart';
-import 'package:imdb_app/components/custom_listview.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
 import 'package:imdb_app/components/poster_card.dart';
@@ -7,7 +6,7 @@ import 'package:imdb_app/components/poster_card_wrapper.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_media.dart';
-import 'package:imdb_app/models/simple_postercard_media.dart';
+import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/network_manager/people_service.dart';
 import 'package:imdb_app/network_manager/trending_service.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
@@ -27,12 +26,12 @@ class _HomePageViewState extends State<HomePageView> {
     return await service.fetchTrendingMedia(timeWindow: "week");
   }
 
-  Future<List<SimplePosterCardMedia>?> fetchTrendingWeek() async {
+  Future<List<PosterCardMedia>?> fetchTrendingWeek() async {
     TrendingService service = TrendingService();
     return await service.fetchTrendingAsPosterCard(timeWindow: "day");
   }
 
-  Future<List<SimplePosterCardMedia>?> fetchPopularPeople() async {
+  Future<List<PosterCardMedia>?> fetchPopularPeople() async {
     IPeopleService service = PeopleService();
     return await service.fetchPopularPeople();
   }
@@ -64,31 +63,26 @@ class _HomePageViewState extends State<HomePageView> {
     );
   }
 
-  FutureBuilder<List<SimplePosterCardMedia>?> trendingTodayPoster() {
+  FutureBuilder<List<PosterCardMedia>?> trendingTodayPoster() {
     return FutureBuilder(
       future: fetchTrendingWeek(),
-      builder: (context, AsyncSnapshot<List<SimplePosterCardMedia>?> snapshot) {
+      builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final trendingList = snapshot.data;
           return PosterCardWrapper(
             title: StringConstants.trendingToday,
-            customListView: CustomListView(
-              prototype: PosterCard.fromSimplePosterCardMedia(
-                media: trendingList![0],
-              ),
-              listView: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: trendingList.length,
-                itemBuilder: (context, index) {
-                  final media = trendingList[index];
-                  return Padding(
-                    padding: EdgeInsets.only(right: Paddings.low.value),
-                    child: PosterCard.fromSimplePosterCardMedia(
-                      media: media,
-                    ),
-                  );
-                },
-              ),
+            listView: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: trendingList?.length,
+              itemBuilder: (context, index) {
+                final media = trendingList?[index];
+                return media != null  ? Padding(
+                  padding: EdgeInsets.only(right: Paddings.low.value),
+                  child: PosterCard.fromSimplePosterCardMedia(
+                    media: media,
+                  ),
+                ) : const SizedBox.shrink();
+              },
             ),
           );
         } else {
@@ -98,32 +92,27 @@ class _HomePageViewState extends State<HomePageView> {
     );
   }
 
-  FutureBuilder<List<SimplePosterCardMedia>?> popularPeopleView() {
+  FutureBuilder<List<PosterCardMedia>?> popularPeopleView() {
     return FutureBuilder(
       future: fetchPopularPeople(),
-      builder: (context, AsyncSnapshot<List<SimplePosterCardMedia>?> snapshot) {
+      builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final popularList = snapshot.data;
           return PosterCardWrapper(
             title: StringConstants.popularPeople,
-            customListView: CustomListView(
-              prototype: PosterCard.fromSimplePosterCardMedia(
-                media: popularList![0],
-              ),
-              listView: ListView.builder(
+            listView:  ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: popularList.length,
+                itemCount: popularList?.length,
                 itemBuilder: (context, index) {
-                  final media = popularList[index];
-                  return Padding(
+                  final media = popularList?[index];
+                  return media != null ? Padding(
                     padding: EdgeInsets.only(right: Paddings.low.value),
                     child: PosterCard.fromSimplePosterCardMedia(
                       media: media,
                     ),
-                  );
+                  ) : const SizedBox.shrink();
                 },
               ),
-            ),
           );
         } else {
           return const SizedBox.shrink();

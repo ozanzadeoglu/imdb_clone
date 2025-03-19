@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:imdb_app/models/simple_media.dart';
-import 'package:imdb_app/models/simple_postercard_media.dart';
+import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/network_manager/dio_client.dart';
 
 class TrendingService {
@@ -24,13 +24,13 @@ class TrendingService {
       }
       return null;
     }
-    Future<List<SimplePosterCardMedia>?> fetchTrendingAsPosterCard({required String timeWindow}) async {//time_window can be day or week
+    Future<List<PosterCardMedia>?> fetchTrendingAsPosterCard({required String timeWindow}) async {//time_window can be day or week
       try{
         Response response = await _dio.get("trending/all/$timeWindow");
         if(response.statusCode == 200){
           var resultsList = response.data["results"];
-          return List<SimplePosterCardMedia>.from(
-          resultsList.map((item) => SimplePosterCardMedia.fromJson(item)),
+          return List<PosterCardMedia>.from(
+          resultsList.map((item) => PosterCardMedia.fromJson(item)),
         );
         }
         return null;
