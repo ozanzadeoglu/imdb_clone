@@ -41,7 +41,6 @@ class _GenreContainer extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Paddings.low.value),
-          //context.border.lowBorderRadius,
           color: ColorConstants.offBlack),
       child: Align(
         alignment: Alignment.center,
@@ -59,13 +58,3 @@ class _GenreContainer extends StatelessWidget {
     );
   }
 }
-
-// Padding(
-//         padding: EdgeInsets.symmetric(horizontal: Paddings.medium.value, vertical: Paddings.low.value),
-//         child: Text(
-//           name,
-//           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-//             color: ColorConstants.white,
-//           ), 
-//         ),
-//       ),
