@@ -6,7 +6,6 @@ import 'package:imdb_app/controllers/search_view_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
-import 'package:kartal/kartal.dart';
 import 'package:provider/provider.dart';
 
 class SearchView extends StatelessWidget {
@@ -20,24 +19,21 @@ class SearchView extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        //backgroundColor: Colors.black,
         appBar: AppBar(
+          surfaceTintColor: ColorConstants.offBlack,
           automaticallyImplyLeading: false,
           centerTitle: false,
           titleSpacing: 0,
           toolbarHeight: kToolbarHeight + 18,
           title: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              8, 6, 8 , 12
-            ),
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
             child: CustomSearchBar(),
           ),
         ),
         body: SafeArea(
           child: Column(
             children: [
-              //CustomSearchBar(),
-              Expanded(
+              Flexible(
                 child:
                     isFocused ? SearchResultsListView() : RecentSearchesView(),
               ),
@@ -60,49 +56,46 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
     final controller = context.read<SearchViewController>();
-    return Container(
-      color: ColorConstants.offBlack,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            flex: 3,
-            child: TextField(
-              style: TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                prefixIconColor: ColorConstants.thamarBlack,
-                prefixIcon: Icon(Icons.search),
-              ),
-              controller: controller.textController,
-              focusNode: controller.textFieldFocusNode,
-              keyboardType: TextInputType.name,
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Expanded(
+          flex: 3,
+          child: TextField(
+            style: TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              prefixIconColor: ColorConstants.thamarBlack,
+              prefixIcon: Icon(Icons.search),
             ),
+            controller: controller.textController,
+            focusNode: controller.textFieldFocusNode,
+            keyboardType: TextInputType.name,
           ),
-          Expanded(
-            flex: 1,
-            child: SizedBox(
-              height: kToolbarHeight,
-              child: TextButton(
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
+        ),
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: kToolbarHeight,
+            child: TextButton(
+              style: ButtonStyle(
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
                   ),
                 ),
-                onPressed: controller.clearTextFieldText,
-                child: Text(StringConstants.cancel,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: ColorConstants.iconYellow)),
               ),
+              onPressed: controller.clearTextFieldText,
+              child: Text(StringConstants.cancel,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: ColorConstants.iconYellow)),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -119,13 +112,15 @@ class SearchResultsListView extends StatelessWidget {
             (v) => v.listTileMediaList);
     final vm = context.read<SearchViewController>();
 
+    final double listTileHeight = 120;
+
     return ListView.builder(
       padding: const EdgeInsets.all(0),
       itemCount: itemList!.length,
       itemBuilder: (context, index) {
         final item = itemList[index];
         return SizedBox(
-          height: context.sized.height * 0.13,
+          height: listTileHeight,
           child: CustomListTile(
             item: item,
             onTap: () {
@@ -155,6 +150,8 @@ class RecentSearchesView extends StatelessWidget {
         context.select<SearchViewController, List<SimpleListTileMedia>?>(
             (v) => v.researchesList);
     final vm = context.read<SearchViewController>();
+
+    final double listTileHeight = 120;
 
     return Column(
       children: [
@@ -193,7 +190,7 @@ class RecentSearchesView extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = itemList[index];
               return SizedBox(
-                height: context.sized.height * 0.13,
+                height: listTileHeight,
                 child: CustomListTile(
                   item: item,
                   onTap: () {
