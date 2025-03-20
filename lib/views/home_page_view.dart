@@ -1,7 +1,6 @@
 import 'package:imdb_app/components/custom_backdrop_network_image.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
-import 'package:imdb_app/components/poster_card.dart';
 import 'package:imdb_app/components/poster_card_wrapper.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/paddings.dart';
@@ -69,21 +68,9 @@ class _HomePageViewState extends State<HomePageView> {
       builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final trendingList = snapshot.data;
-          return PosterCardWrapper(
+          return PosterCardWrapper<PosterCardMedia>(
             title: StringConstants.trendingToday,
-            listView: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: trendingList?.length,
-              itemBuilder: (context, index) {
-                final media = trendingList?[index];
-                return media != null  ? Padding(
-                  padding: EdgeInsets.only(right: Paddings.low.value),
-                  child: PosterCard.fromSimplePosterCardMedia(
-                    media: media,
-                  ),
-                ) : const SizedBox.shrink();
-              },
-            ),
+            list: trendingList, 
           );
         } else {
           return const SizedBox.shrink();
@@ -98,21 +85,9 @@ class _HomePageViewState extends State<HomePageView> {
       builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final popularList = snapshot.data;
-          return PosterCardWrapper(
+          return PosterCardWrapper<PosterCardMedia>(
             title: StringConstants.popularPeople,
-            listView:  ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: popularList?.length,
-                itemBuilder: (context, index) {
-                  final media = popularList?[index];
-                  return media != null ? Padding(
-                    padding: EdgeInsets.only(right: Paddings.low.value),
-                    child: PosterCard.fromSimplePosterCardMedia(
-                      media: media,
-                    ),
-                  ) : const SizedBox.shrink();
-                },
-              ),
+            list:  popularList,
           );
         } else {
           return const SizedBox.shrink();

@@ -1,4 +1,6 @@
-class PosterCardMedia {
+import 'package:imdb_app/models/abstracts/base_poster_card.dart';
+
+class PosterCardMedia extends BasePosterCard{
   final String? title;
   final int? id;
   final String? posterPath;

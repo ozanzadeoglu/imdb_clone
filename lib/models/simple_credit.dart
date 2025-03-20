@@ -2,7 +2,9 @@
 //api returns everything; actors to cameramans,
 //in client, only actors will be created as a SimpleCredit class
 //to used in PosterCards.
-class SimpleCredit {
+import 'package:imdb_app/models/abstracts/base_poster_card.dart';
+
+class SimpleCredit extends BasePosterCard {
   final int? id;
   final String? actorName;
   final String? characterName;

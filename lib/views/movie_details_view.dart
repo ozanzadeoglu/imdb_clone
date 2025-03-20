@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imdb_app/components/custom_backdrop_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
-import 'package:imdb_app/components/poster_card.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/grey_info_label.dart';
 import 'package:imdb_app/components/poster_card_wrapper.dart';
@@ -63,33 +62,32 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.lowlow.value),
                     child: _TitleAndInfoColumn(movie: movie!),
                   ),
-
-                  mq.orientation == Orientation.portrait ?
-                  //show backdrop only when device is on portrait mode. 
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: 0,
-                      minHeight: 0,
-                      maxHeight: context.sized.width / 1.7777,
-                      maxWidth: context.sized.width,
-                    ),
-                    child: CustomBackdropNetworkImage(path: movie.backdropPath),
-                  ) : SizedBox.shrink(),
-
+                  mq.orientation == Orientation.portrait
+                      ?
+                      //show backdrop only when device is on portrait mode.
+                      ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: 0,
+                            minHeight: 0,
+                            maxHeight: context.sized.width / 1.7777,
+                            maxWidth: context.sized.width,
+                          ),
+                          child: CustomBackdropNetworkImage(
+                              path: movie.backdropPath),
+                        )
+                      : SizedBox.shrink(),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.low.value),
                     child: _ImageAndOverviewRow(movie: movie),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -99,12 +97,10 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                       child: SlideableGenre(genreList: movie.genres!),
                     ),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -114,34 +110,19 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         voteAverage: movie.voteAverage!,
                         voteCount: movie.voteCount!),
                   ),
-
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-
                   FutureBuilder(
                     future: fetchCredits(movie.id!),
                     builder:
                         (context, AsyncSnapshot<List<SimpleCredit>?> snapshot) {
                       if (snapshot.hasData) {
                         final actorList = snapshot.data;
-                        return PosterCardWrapper(
+                        return PosterCardWrapper<SimpleCredit>(
                           title: StringConstants.cast,
-                          listView: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: actorList?.length,
-                              itemBuilder: (context, index) {
-                                final actor = actorList?[index];
-                                return actor != null ? Padding(
-                                  padding: EdgeInsets.only(
-                                      right: Paddings.low.value),
-                                  child: PosterCard.fromCredit(
-                                    simpleCredit: actor,
-                                  ),
-                                ): const SizedBox.shrink();
-                              },
-                            ),
+                          list: actorList,
                         );
                       } else {
                         return const SizedBox.shrink();

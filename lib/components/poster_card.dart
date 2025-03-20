@@ -4,13 +4,14 @@ import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/media_types.dart';
 import 'package:imdb_app/enums/paddings.dart';
+import 'package:imdb_app/models/abstracts/base_poster_card.dart';
 import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 
 import '../models/simple_credit.dart';
 
-class PosterCard extends StatelessWidget {
+class PosterCard<T extends BasePosterCard> extends StatelessWidget {
   final String? imagePath;
   final String? title;
   final String? info;
@@ -18,14 +19,26 @@ class PosterCard extends StatelessWidget {
   final String? mediaType;
   final double? rating;
 
-  const PosterCard(
-      {super.key,
-      required this.imagePath,
-      required this.title,
-      required this.info,
-      required this.id,
-      required this.mediaType,
-      this.rating});
+  const PosterCard({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    required this.info,
+    required this.id,
+    required this.mediaType,
+    this.rating,
+  });
+
+  factory PosterCard.fromType({required data}) {
+    if (T == SimpleCredit) {
+      return PosterCard.fromCredit(simpleCredit: data);
+    }
+    //must be [PosterCardMedia] if it's not [SimpleCredit] thanks to
+    //subtyping.
+    else {
+      return PosterCard.fromPosterCardMedia(media: data);
+    }
+  }
 
   PosterCard.fromCredit({super.key, required SimpleCredit simpleCredit})
       : id = simpleCredit.id,
@@ -35,15 +48,14 @@ class PosterCard extends StatelessWidget {
         mediaType = MediaTypes.person.value,
         rating = null;
 
-  PosterCard.fromSimplePosterCardMedia(
-      {super.key, required PosterCardMedia media})
+  PosterCard.fromPosterCardMedia({super.key, required PosterCardMedia media})
       : id = media.id,
         info = media.mediaType,
         imagePath = media.posterPath,
         title = media.title,
         mediaType = media.mediaType,
         rating = media.voteAverage;
-  
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -53,27 +65,18 @@ class PosterCard extends StatelessWidget {
         mediaID: id,
         mediaTitle: title,
       ),
-      //350 total
       child: SizedBox(
-        //looked into imdb from chrome devtools, in phone views
-        //width was 0.4 of the screen width and height of the image was
-        // 3/2 of the width.
-        // height: 250,
-        width: 150, //context.sized.width * ImageSizes.responsiveWidthMultiplier.value,
+        width: 140,
         child: Container(
-          decoration: BoxDecoration(
-            color: ColorConstants.offBlack,
-            borderRadius: BorderRadius.circular(context.sized.normalValue),
-          ),
+          decoration: wrapperContainerDecoration(context),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _PosterCardImage(imagePath: imagePath), //225
+              _PosterCardImage(imagePath: imagePath),
               Padding(
-                padding: EdgeInsets.all(Paddings.low.value), //16
+                padding: EdgeInsets.all(Paddings.low.value),
                 child: _PosterCardInfoColumn(
-                  //98
                   title: title,
                   info: info,
                   rating: rating,
@@ -83,6 +86,13 @@ class PosterCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  BoxDecoration wrapperContainerDecoration(BuildContext context) {
+    return BoxDecoration(
+      color: ColorConstants.offBlack,
+      borderRadius: BorderRadius.circular(context.sized.normalValue),
     );
   }
 }
@@ -98,18 +108,13 @@ class _PosterCardImage extends StatelessWidget {
           top: Radius.circular(context.sized.normalValue)),
       child: CustomPosterNetworkImage(
         path: imagePath,
-        height: 225,
-        width: 150,
+        height: 210,
+        width: 140,
       ),
     );
   }
 }
 
-//84 + 14
-//in devtools this components was a little bit weird. It took height
-//from its childeren but the text was wrapped in a box with 2.5rem height.
-//I'll look into textTheme's bodylarge's fon size and create a sizedbox
-//according to it. Column will take its height from childeren.
 class _PosterCardInfoColumn extends StatelessWidget {
   final String? title;
   final String? info;
@@ -139,17 +144,17 @@ class _PosterCardInfoColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final double posterCardRatingHeight = 24;
     final double posterCardTitleBoxHeight = 48;
-
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PosterCardRating(rating: rating),//24
+        PosterCardRating(rating: rating), //24
         SizedBox(height: Paddings.lowlow.value),
-        SizedBox(height: posterCardTitleBoxHeight, child: PosterCardTitleBox(title: title)),
+        SizedBox(
+            height: posterCardTitleBoxHeight,
+            child: PosterCardTitleBox(title: title)),
         const SizedBox(height: 12),
         Text(changeInfoIfNeeded(info) ?? " ",
             maxLines: 1,
@@ -160,7 +165,6 @@ class _PosterCardInfoColumn extends StatelessWidget {
   }
 }
 
-//48
 //poster card's title will be created here.
 //text wrapped by fixed height sizedbox so ui
 //will not depend on title length. e.g 1 line, 2 lines
@@ -179,7 +183,6 @@ class PosterCardTitleBox extends StatelessWidget {
   }
 }
 
-//24
 class PosterCardRating extends StatelessWidget {
   final double? rating;
   const PosterCardRating({super.key, required this.rating});
@@ -189,8 +192,8 @@ class PosterCardRating extends StatelessWidget {
     return rating == null
         ? const SizedBox.shrink()
         : SizedBox(
-          height: 24,
-          child: Row(
+            height: 24,
+            child: Row(
               children: [
                 const Icon(Icons.star, color: ColorConstants.iconYellow),
                 Text(rating!.toStringAsFixed(1),
@@ -200,6 +203,6 @@ class PosterCardRating extends StatelessWidget {
                         .copyWith(color: Colors.white)),
               ],
             ),
-        );
+          );
   }
 }

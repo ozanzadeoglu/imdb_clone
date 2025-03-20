@@ -2,7 +2,6 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
-import 'package:imdb_app/components/poster_card.dart';
 import 'package:imdb_app/components/poster_card_wrapper.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
@@ -78,21 +77,9 @@ class PeopleDetailsView extends StatelessWidget {
       builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final knownForList = snapshot.data;
-          return PosterCardWrapper(
+          return PosterCardWrapper<PosterCardMedia>(
             title: StringConstants.peopleDetailsKnownFor,
-            listView: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: knownForList?.length,
-              itemBuilder: (context, index) {
-                final media = knownForList?[index];
-                return media != null ? Padding(
-                  padding: EdgeInsets.only(right: Paddings.low.value),
-                  child: PosterCard.fromSimplePosterCardMedia(
-                    media: media,
-                  ),
-                ) : const SizedBox.shrink();
-              },
-            ),
+            list: knownForList,
           );
         } else {
           return const SizedBox.shrink();

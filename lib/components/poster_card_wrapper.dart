@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:imdb_app/components/custom_listview.dart';
+import 'package:imdb_app/components/poster_card.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/enums/icon_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
+import 'package:imdb_app/models/abstracts/base_poster_card.dart';
 
-class PosterCardWrapper<T> extends StatelessWidget {
+class PosterCardWrapper<T extends BasePosterCard> extends StatelessWidget {
   final String title;
   final String? description;
-  final ListView listView;
+  final List<T>? list;
+
   const PosterCardWrapper({
     super.key,
     required this.title,
     this.description,
-    required this.listView,
-    //required this.mediaType
+    required this.list,
   });
-
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return list != null && list!.isNotEmpty ? SafeArea(
       top: false,
       child: Container(
         color: ColorConstants.thamarBlack,
@@ -41,18 +43,51 @@ class PosterCardWrapper<T> extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 18.0),
                 child: _DescriptionText(description: description),
               ),
-      
+
               Padding(
-                  padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                  child: SizedBox(
-                    height: 350, //326
-                    child: listView,
-                  )),
+                padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
+                child: HorizontalPosterCardList<T>(list: list),
+              ),
             ],
           ),
         ),
       ),
-    );
+    ) : const SizedBox.shrink();
+  }
+}
+
+class HorizontalPosterCardList<T extends BasePosterCard> extends StatelessWidget {
+  const HorizontalPosterCardList({
+    super.key,
+    required this.list,
+  });
+
+  final List? list;
+
+  @override
+  Widget build(BuildContext context) {
+    return (list != null && list!.isNotEmpty)
+        ? CustomListView(
+            prototype: PosterCard<T>.fromType(
+              data: list![0],
+            ),
+            listView: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: list?.length,
+              itemBuilder: (context, index) {
+                final data = list?[index];
+                return data != null
+                    ? Padding(
+                        padding: EdgeInsets.only(right: Paddings.low.value),
+                        child: PosterCard<T>.fromType(
+                          data: data,
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              },
+            ),
+          )
+        : const SizedBox.shrink();
   }
 }
 
