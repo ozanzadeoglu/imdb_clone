@@ -3,7 +3,7 @@ import 'package:imdb_app/components/custom_poster_network_image.dart';
 import 'package:imdb_app/components/loading_widget.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
-import 'package:imdb_app/controllers/tv_series_seasons_controller.dart';
+import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
 import 'package:imdb_app/enums/other_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_tv_series_episode.dart';

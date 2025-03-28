@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:imdb_app/components/custom_list_tile.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
-import 'package:imdb_app/controllers/search_view_controller.dart';
+import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
