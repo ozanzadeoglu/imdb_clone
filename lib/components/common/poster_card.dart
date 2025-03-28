@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/custom_poster_network_image.dart';
+import 'package:imdb_app/components/common/custom_poster_network_image.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/media_types.dart';
@@ -9,7 +9,7 @@ import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 
-import '../models/simple_credit.dart';
+import '../../models/simple_credit.dart';
 
 class PosterCard<T extends BasePosterCard> extends StatelessWidget {
   final String? imagePath;

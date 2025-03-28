@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/custom_listview.dart';
-import 'package:imdb_app/components/poster_card.dart';
+import 'package:imdb_app/components/common/poster_card.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/enums/icon_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
@@ -67,7 +66,7 @@ class HorizontalPosterCardList<T extends BasePosterCard> extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return (list != null && list!.isNotEmpty)
-        ? CustomListView(
+        ? _CustomListView(
             prototype: PosterCard<T>.fromType(
               data: list![0],
             ),
@@ -126,6 +125,33 @@ class _TitleIcon extends StatelessWidget {
         width: 6,
         color: ColorConstants.iconYellow,
       ),
+    );
+  }
+}
+
+
+class _CustomListView extends StatelessWidget {
+  final Widget prototype;
+  final ListView listView;
+
+  const _CustomListView({
+    required this.prototype,
+    required this.listView,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        IgnorePointer(
+          child: Opacity(
+            opacity: 0.0,
+            child: prototype,
+          ),
+        ),
+        const SizedBox(width: double.infinity),
+        Positioned.fill(child: listView),
+      ],
     );
   }
 }
