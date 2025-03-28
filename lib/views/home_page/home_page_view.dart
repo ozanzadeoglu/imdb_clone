@@ -12,6 +12,8 @@ import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 import 'package:flutter/material.dart';
 
+part "widgets/_media_showcase_slider.dart";
+
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
 
@@ -20,17 +22,29 @@ class HomePageView extends StatefulWidget {
 }
 
 class _HomePageViewState extends State<HomePageView> {
-  Future<List<SimpleMedia>?> fetchTrending() async {
+  late final Future<List<SimpleMedia>?> trendingAsTopMedia;
+  late final Future<List<PosterCardMedia>?> trendingAsPosterCard;
+  late final Future<List<PosterCardMedia>?> popularPeople;
+
+  @override
+  void initState() {
+    super.initState();
+    trendingAsTopMedia = _fetchTrending();
+    trendingAsPosterCard = _fetchTrendingDay();
+    popularPeople = _fetchPopularPeople();
+  }
+
+  Future<List<SimpleMedia>?> _fetchTrending() async {
     TrendingService service = TrendingService();
     return await service.fetchTrendingMedia(timeWindow: "week");
   }
 
-  Future<List<PosterCardMedia>?> fetchTrendingWeek() async {
+  Future<List<PosterCardMedia>?> _fetchTrendingDay() async {
     TrendingService service = TrendingService();
     return await service.fetchTrendingAsPosterCard(timeWindow: "day");
   }
 
-  Future<List<PosterCardMedia>?> fetchPopularPeople() async {
+  Future<List<PosterCardMedia>?> _fetchPopularPeople() async {
     IPeopleService service = PeopleService();
     return await service.fetchPopularPeople();
   }
@@ -44,6 +58,7 @@ class _HomePageViewState extends State<HomePageView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+
               mq.orientation == Orientation.portrait
                   ? SizedBox(
                       height: context.sized.width * 2 / 3 +
@@ -51,14 +66,17 @@ class _HomePageViewState extends State<HomePageView> {
                       child: _topSlidingView(),
                     )
                   : SizedBox.shrink(),
+
               Padding(
                 padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
                 child: trendingTodayPoster(),
               ),
+
               Padding(
                 padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
                 child: popularPeopleView(),
               ),
+              
             ],
           ),
         ),
@@ -66,9 +84,33 @@ class _HomePageViewState extends State<HomePageView> {
     );
   }
 
+  FutureBuilder<List<SimpleMedia>?> _topSlidingView() {
+    return FutureBuilder<List<SimpleMedia>?>(
+      future: trendingAsTopMedia,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<SimpleMedia>?> snapshot) {
+        if (snapshot.hasData) {
+          return PageView.builder(
+            allowImplicitScrolling: true,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              final media = snapshot
+                  .data![index % snapshot.data!.length]; //infinite scroll logic
+              return _MediaShowcaseSlider(
+                simpleMedia: media,
+              );
+            },
+          );
+        } else {
+          return const LoadingWidget();
+        }
+      },
+    );
+  }
+
   FutureBuilder<List<PosterCardMedia>?> trendingTodayPoster() {
     return FutureBuilder(
-      future: fetchTrendingWeek(),
+      future: trendingAsPosterCard,
       builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final trendingList = snapshot.data;
@@ -85,7 +127,7 @@ class _HomePageViewState extends State<HomePageView> {
 
   FutureBuilder<List<PosterCardMedia>?> popularPeopleView() {
     return FutureBuilder(
-      future: fetchPopularPeople(),
+      future: popularPeople,
       builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
         if (snapshot.hasData) {
           final popularList = snapshot.data;
@@ -97,104 +139,6 @@ class _HomePageViewState extends State<HomePageView> {
           return const SizedBox.shrink();
         }
       },
-    );
-  }
-
-  FutureBuilder<List<SimpleMedia>?> _topSlidingView() {
-    return FutureBuilder<List<SimpleMedia>?>(
-      future: fetchTrending(),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<SimpleMedia>?> snapshot) {
-        if (snapshot.hasData) {
-          return PageView.builder(
-            allowImplicitScrolling: true,
-            scrollDirection: Axis.horizontal,
-            //physics: AlwaysScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              final media = snapshot
-                  .data![index % snapshot.data!.length]; //infinite scroll logic
-              return _CustomOnboardStack(
-                simpleMedia: media,
-              );
-            },
-          );
-        } else {
-          return const LoadingWidget();
-        }
-      },
-    );
-  }
-}
-
-class _CustomOnboardStack extends StatelessWidget {
-  final SimpleMedia simpleMedia;
-
-  const _CustomOnboardStack({
-    required this.simpleMedia,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (simpleMedia.id != null &&
-            (simpleMedia.title ?? simpleMedia.name) != null) {
-          NavigationUtils().launchDependingOnMediaType(
-            context: context,
-            mediaType: simpleMedia.mediaType,
-            mediaID: simpleMedia.id,
-            mediaTitle: simpleMedia.name ?? simpleMedia.title,
-          );
-        }
-      },
-      child: Stack(
-        children: [
-          Positioned(
-            width: context.sized.width,
-            //api backdrop image resolution is 1.7, height is calculated
-            //depending on width.
-            height: context.sized.width / 1.7777,
-            bottom: context.sized.height * 0.1,
-            child: CustomBackdropNetworkImage(path: simpleMedia.backdropPath),
-          ),
-          Positioned(
-            height: context.sized.height * 0.2,
-            width: context.sized.width * 0.9,
-            bottom: 0,
-            left: context.sized.width * 0.1,
-            child: Row(
-              children: [
-                CustomPosterNetworkImage(path: simpleMedia.posterPath),
-                Expanded(
-                  child: Column(
-                    children: [
-                      const Expanded(
-                        child: SizedBox.shrink(),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: ListTile(
-                                title: Text(
-                                    simpleMedia.title ?? simpleMedia.name ?? "",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis),
-                                subtitle: Text(simpleMedia.overview ?? "",
-                                    overflow: TextOverflow.ellipsis),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
