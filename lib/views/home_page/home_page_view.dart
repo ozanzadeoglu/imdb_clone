@@ -1,7 +1,7 @@
-import 'package:imdb_app/components/custom_backdrop_network_image.dart';
-import 'package:imdb_app/components/custom_poster_network_image.dart';
-import 'package:imdb_app/components/loading_widget.dart';
-import 'package:imdb_app/components/poster_card_wrapper.dart';
+import 'package:imdb_app/components/common/custom_backdrop_network_image.dart';
+import 'package:imdb_app/components/common/custom_poster_network_image.dart';
+import 'package:imdb_app/components/common/loading_widget.dart';
+import 'package:imdb_app/components/common/poster_card_wrapper.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_media.dart';

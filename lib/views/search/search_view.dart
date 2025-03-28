@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/custom_list_tile.dart';
+import 'package:imdb_app/components/common/custom_poster_network_image.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
+import 'package:imdb_app/enums/media_types.dart';
+import 'package:imdb_app/extensions/better_display.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/simple_list_tile_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:provider/provider.dart';
+
+part 'widgets/_search_tile.dart';
 
 class SearchView extends StatelessWidget {
   const SearchView({super.key});
@@ -35,7 +39,7 @@ class SearchView extends StatelessWidget {
             children: [
               Flexible(
                 child:
-                    isFocused ? SearchResultsListView() : RecentSearchesView(),
+                    isFocused ? _SearchResultsListView() : _RecentSearchesView(),
               ),
             ],
           ),
@@ -100,8 +104,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   }
 }
 
-class SearchResultsListView extends StatelessWidget {
-  SearchResultsListView({super.key});
+class _SearchResultsListView extends StatelessWidget {
+  _SearchResultsListView();
 
   final navigation = NavigationUtils();
 
@@ -121,7 +125,7 @@ class SearchResultsListView extends StatelessWidget {
         final item = itemList[index];
         return SizedBox(
           height: listTileHeight,
-          child: CustomListTile(
+          child: SearchTile(
             item: item,
             onTap: () {
               vm.addToHistory(item);
@@ -139,8 +143,8 @@ class SearchResultsListView extends StatelessWidget {
   }
 }
 
-class RecentSearchesView extends StatelessWidget {
-  RecentSearchesView({super.key});
+class _RecentSearchesView extends StatelessWidget {
+  _RecentSearchesView();
 
   final navigation = NavigationUtils();
 
@@ -191,7 +195,7 @@ class RecentSearchesView extends StatelessWidget {
               final item = itemList[index];
               return SizedBox(
                 height: listTileHeight,
-                child: CustomListTile(
+                child: SearchTile(
                   item: item,
                   onTap: () {
                     vm.addToHistory(item);

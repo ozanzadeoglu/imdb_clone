@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:imdb_app/components/common/custom_backdrop_network_image.dart';
 import 'package:imdb_app/components/common/loading_widget.dart';
 import 'package:imdb_app/components/media/grey_info_label.dart';
@@ -6,41 +7,44 @@ import 'package:imdb_app/components/media/popularity_row.dart';
 import 'package:imdb_app/components/common/poster_card_wrapper.dart';
 import 'package:imdb_app/components/media/poster_and_overview_row.dart';
 import 'package:imdb_app/components/media/slideable_genre.dart';
+import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
-import 'package:imdb_app/extensions/better_display.dart';
 import 'package:imdb_app/enums/other_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
-import 'package:imdb_app/models/movie.dart';
+import 'package:imdb_app/extensions/better_display.dart';
 import 'package:imdb_app/models/simple_credit.dart';
-import 'package:imdb_app/network_manager/movie_service.dart';
+import 'package:imdb_app/models/tv_series.dart';
+import 'package:imdb_app/network_manager/tv_series_service.dart';
 import 'package:kartal/kartal.dart';
 
 part 'widgets/_title_and_info.dart';
+part 'widgets/_episode_guide_row.dart';
 
-class MovieDetailsView extends StatefulWidget {
-  final int movieID;
-  final String movieTitle;
+class TvSeriesDetailsView extends StatefulWidget {
+  final int tvSeriesID;
+  final String tvSeriesName;
 
-  const MovieDetailsView(
-      {super.key, required this.movieID, required this.movieTitle});
+  const TvSeriesDetailsView(
+      {super.key, required this.tvSeriesID, required this.tvSeriesName});
 
   @override
-  State<MovieDetailsView> createState() => _MovieDetailsViewState();
+  State<TvSeriesDetailsView> createState() => _TvSeriesDetailsViewState();
 }
 
-class _MovieDetailsViewState extends State<MovieDetailsView> {
-  final IMovieService _service = MovieService();
+class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
+  final ITvSeriesService _service = TvSeriesService();
 
-  Future<Movie?> fetchMovieDetails(int movieID) async {
-    final response = await _service.fetchMovieDetailsWithID(movieID: movieID);
+  Future<TVSeries?> fetchTVSeriesDetails(int tvSeriesID) async {
+    final response =
+        await _service.fetchTVSeriesDetailsWithID(tvSeriesID: tvSeriesID);
     if (response != null) {
       return response;
     }
     return null;
   }
 
-  Future<List<SimpleCredit>?> fetchCredits(int movieID) async {
-    final response = await _service.fetchCreditsWithID(movieID: movieID);
+  Future<List<SimpleCredit>?> fetchCredits(int tvSeriesID) async {
+    final response = await _service.fetchCreditsWithID(tvSeriesID: tvSeriesID);
     if (response != null) {
       return response;
     }
@@ -52,22 +56,24 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
     MediaQueryData mq = MediaQuery.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.movieTitle), centerTitle: false),
+      appBar: AppBar(title: Text(widget.tvSeriesName), centerTitle: false),
       body: FutureBuilder(
-        future: fetchMovieDetails(widget.movieID),
-        builder: (context, AsyncSnapshot<Movie?> snapshot) {
+        future: fetchTVSeriesDetails(widget.tvSeriesID),
+        builder: (context, AsyncSnapshot<TVSeries?> snapshot) {
           if (snapshot.hasData) {
-            final movie = snapshot.data;
+            final tvSeries = snapshot.data;
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: Paddings.medium.value,
-                        vertical: Paddings.lowlow.value),
-                    child: _TitleAndInfo(movie: movie!),
+                      horizontal: Paddings.medium.value,
+                      //vertical: Paddings.lowlow.value,
+                    ),
+                    child: _TitleAndInfo(tvSeries: tvSeries!),
                   ),
+                  _EpisodeGuideRow(tvSeries: tvSeries),
                   mq.orientation == Orientation.portrait
                       ?
                       //show backdrop only when device is on portrait mode.
@@ -79,7 +85,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                             maxWidth: context.sized.width,
                           ),
                           child: CustomBackdropNetworkImage(
-                              path: movie.backdropPath),
+                              path: tvSeries.backdropPath),
                         )
                       : SizedBox.shrink(),
                   Padding(
@@ -87,9 +93,8 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.low.value),
                     child: PosterAndOverviewRow(
-                      overview: movie.overview,
-                      posterPath: movie.posterPath,
-                    ),
+                        overview: tvSeries.overview,
+                        posterPath: tvSeries.posterPath),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -97,7 +102,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         vertical: Paddings.lowlow.value),
                     child: SizedBox(
                       height: OtherSizes.genreContainerHeight.value,
-                      child: SlideableGenre(genreList: movie.genres!),
+                      child: SlideableGenre(genreList: tvSeries.genres!),
                     ),
                   ),
                   Padding(
@@ -109,29 +114,15 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.lowlow.value),
                     child: PopularityRow(
-                        popularity: movie.popularity,
-                        voteAverage: movie.voteAverage,
-                        voteCount: movie.voteCount),
+                        popularity: tvSeries.popularity,
+                        voteAverage: tvSeries.voteAverage,
+                        voteCount: tvSeries.voteCount),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-                  FutureBuilder(
-                    future: fetchCredits(movie.id!),
-                    builder:
-                        (context, AsyncSnapshot<List<SimpleCredit>?> snapshot) {
-                      if (snapshot.hasData) {
-                        final actorList = snapshot.data;
-                        return PosterCardWrapper<SimpleCredit>(
-                          title: StringConstants.cast,
-                          list: actorList,
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
-                  ),
+                  castPosterCardListView(tvSeries),
                 ],
               ),
             );
@@ -140,6 +131,21 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
           }
         },
       ),
+    );
+  }
+
+  FutureBuilder<List<SimpleCredit>?> castPosterCardListView(TVSeries tvSeries) {
+    return FutureBuilder(
+      future: fetchCredits(tvSeries.id!),
+      builder: (context, AsyncSnapshot<List<SimpleCredit>?> snapshot) {
+        if (snapshot.hasData) {
+          final actorList = snapshot.data;
+          return PosterCardWrapper<SimpleCredit>(
+              title: StringConstants.cast, list: actorList);
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 }

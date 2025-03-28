@@ -1,20 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:imdb_app/components/custom_poster_network_image.dart';
-import 'package:imdb_app/constants/color_constants.dart';
-import 'package:imdb_app/constants/string_constants.dart';
-import 'package:imdb_app/enums/media_types.dart';
-import 'package:imdb_app/enums/paddings.dart';
-import 'package:imdb_app/extensions/better_display.dart';
-import 'package:imdb_app/models/simple_list_tile_media.dart';
+part of '../search_view.dart';
 
-
-class CustomListTile extends StatelessWidget {
+class SearchTile extends StatelessWidget {
   final SimpleListTileMedia item;
   final VoidCallback? onTap;
-  const CustomListTile({super.key, required this.item, this.onTap});
-
-
-
+  const SearchTile({super.key, required this.item, this.onTap});
 
   @override
   Widget build(BuildContext context) {
