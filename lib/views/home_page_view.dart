@@ -37,26 +37,30 @@ class _HomePageViewState extends State<HomePageView> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mq = MediaQuery.of(context);
+
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SafeArea(
-              child: SizedBox(
-                height:
-                    context.sized.width * 2 / 3 + context.sized.height * 0.05,
-                child: _topSlidingView(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              mq.orientation == Orientation.portrait
+                  ? SizedBox(
+                      height: context.sized.width * 2 / 3 +
+                          context.sized.height * 0.05,
+                      child: _topSlidingView(),
+                    )
+                  : SizedBox.shrink(),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
+                child: trendingTodayPoster(),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
-              child: trendingTodayPoster(),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
-              child: popularPeopleView(),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
+                child: popularPeopleView(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -70,7 +74,7 @@ class _HomePageViewState extends State<HomePageView> {
           final trendingList = snapshot.data;
           return PosterCardWrapper<PosterCardMedia>(
             title: StringConstants.trendingToday,
-            list: trendingList, 
+            list: trendingList,
           );
         } else {
           return const SizedBox.shrink();
@@ -87,7 +91,7 @@ class _HomePageViewState extends State<HomePageView> {
           final popularList = snapshot.data;
           return PosterCardWrapper<PosterCardMedia>(
             title: StringConstants.popularPeople,
-            list:  popularList,
+            list: popularList,
           );
         } else {
           return const SizedBox.shrink();
