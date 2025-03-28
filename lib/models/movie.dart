@@ -9,13 +9,13 @@ class Movie {
   final String? originalLanguage;
   final String? originalTitle;
   final String? overview;
-  final double? popularity;
+  final double popularity;
   final String? posterPath;
   final String? releaseDate;
   final String? status;
   final String? title;
-  final double? voteAverage;
-  final int? voteCount;
+  final double voteAverage;
+  final int voteCount;
 
   Movie({
     this.backdropPath,
@@ -25,13 +25,13 @@ class Movie {
     this.originalLanguage,
     this.originalTitle,
     this.overview,
-    this.popularity,
+    required this.popularity,
     this.posterPath,
     this.releaseDate,
     this.status,
     this.title,
-    this.voteAverage,
-    this.voteCount,
+    required this.voteAverage,
+    required this.voteCount,
   });
 
   // Factory constructor to create a Movie object from a JSON map
@@ -47,12 +47,12 @@ class Movie {
       originalTitle: json['original_title'],
       //return StringConstants.noOverview if there's no overview.
       overview: json['overview'] == "" || json['overview'] == null ? StringConstants.noOverview : json['overview'],
-      popularity: (json['popularity'] as num?)?.toDouble(),
+      popularity: (json['popularity'] as num).toDouble(),
       posterPath: json['poster_path'],
       releaseDate: json['release_date'],
       status: json['status'],
       title: json['title'],
-      voteAverage: (json['vote_average'] as num?)?.toDouble(),
+      voteAverage: (json['vote_average'] as num).toDouble(),
       voteCount: json['vote_count'],
     );
   }

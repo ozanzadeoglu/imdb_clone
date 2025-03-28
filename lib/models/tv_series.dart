@@ -12,11 +12,11 @@ class TVSeries {
   final int? numberOfEpisodes;
   final int? numberOfSeasons;
   final String? overview;
-  final double? popularity;
+  final double popularity;
   final String? posterPath;
   final String? status;
-  final double? voteAverage;
-  final int? voteCount;
+  final double voteAverage;
+  final int voteCount;
 
   TVSeries({
     this.backdropPath,
@@ -29,11 +29,11 @@ class TVSeries {
     this.numberOfEpisodes,
     this.numberOfSeasons,
     this.overview,
-    this.popularity,
+    required this.popularity,
     this.posterPath,
     this.status,
-    this.voteAverage,
-    this.voteCount,
+    required this.voteAverage,
+    required this.voteCount,
   });
 
   // Factory constructor to create a TVSeries object from a JSON map
@@ -53,10 +53,10 @@ class TVSeries {
       overview: json['overview'] == "" || json['overview'] == null
           ? StringConstants.noOverview
           : json['overview'],
-      popularity: (json['popularity'] as num?)?.toDouble(),
+      popularity: (json['popularity'] as num).toDouble(),
       posterPath: json['poster_path'],
       status: json['status'],
-      voteAverage: (json['vote_average'] as num?)?.toDouble(),
+      voteAverage: (json['vote_average'] as num).toDouble(),
       voteCount: json['vote_count'],
     );
   }
