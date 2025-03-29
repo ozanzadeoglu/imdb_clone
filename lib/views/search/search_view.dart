@@ -11,6 +11,9 @@ import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:provider/provider.dart';
 
 part 'widgets/_search_tile.dart';
+part 'widgets/_custom_search_bar.dart';
+part 'widgets/_recent_searches_view.dart';
+part 'widgets/_search_results_view.dart';
 
 class SearchView extends StatelessWidget {
   const SearchView({super.key});
@@ -19,7 +22,6 @@ class SearchView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isFocused =
         context.select<SearchViewController, bool>((c) => c.isFocused);
-
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -31,7 +33,7 @@ class SearchView extends StatelessWidget {
           toolbarHeight: kToolbarHeight + 18,
           title: Padding(
             padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
-            child: CustomSearchBar(),
+            child: _CustomSearchBar(),
           ),
         ),
         body: SafeArea(
@@ -39,179 +41,12 @@ class SearchView extends StatelessWidget {
             children: [
               Flexible(
                 child:
-                    isFocused ? _SearchResultsListView() : _RecentSearchesView(),
+                    isFocused ? _SearchResultsView() : _RecentSearchesView(),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class CustomSearchBar extends StatefulWidget {
-  const CustomSearchBar({super.key});
-
-  @override
-  State<CustomSearchBar> createState() => _CustomSearchBarState();
-}
-
-class _CustomSearchBarState extends State<CustomSearchBar> {
-  @override
-  Widget build(BuildContext context) {
-    final controller = context.read<SearchViewController>();
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          flex: 3,
-          child: TextField(
-            style: TextStyle(color: Colors.black),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              prefixIconColor: ColorConstants.thamarBlack,
-              prefixIcon: Icon(Icons.search),
-            ),
-            controller: controller.textController,
-            focusNode: controller.textFieldFocusNode,
-            keyboardType: TextInputType.name,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: kToolbarHeight,
-            child: TextButton(
-              style: ButtonStyle(
-                shape: WidgetStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                ),
-              ),
-              onPressed: controller.clearTextFieldText,
-              child: Text(StringConstants.cancel,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: ColorConstants.iconYellow)),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SearchResultsListView extends StatelessWidget {
-  _SearchResultsListView();
-
-  final navigation = NavigationUtils();
-
-  @override
-  Widget build(BuildContext context) {
-    final itemList =
-        context.select<SearchViewController, List<SimpleListTileMedia>?>(
-            (v) => v.listTileMediaList);
-    final vm = context.read<SearchViewController>();
-
-    final double listTileHeight = 120;
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(0),
-      itemCount: itemList!.length,
-      itemBuilder: (context, index) {
-        final item = itemList[index];
-        return SizedBox(
-          height: listTileHeight,
-          child: SearchTile(
-            item: item,
-            onTap: () {
-              vm.addToHistory(item);
-              navigation.launchDependingOnMediaType(
-                mediaType: item.mediaType,
-                mediaID: item.id,
-                mediaTitle: item.name,
-                context: context,
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _RecentSearchesView extends StatelessWidget {
-  _RecentSearchesView();
-
-  final navigation = NavigationUtils();
-
-  @override
-  Widget build(BuildContext context) {
-    final itemList =
-        context.select<SearchViewController, List<SimpleListTileMedia>?>(
-            (v) => v.researchesList);
-    final vm = context.read<SearchViewController>();
-
-    final double listTileHeight = 120;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: Paddings.low.value),
-              child: Text(StringConstants.recentSearches,
-                  style: Theme.of(context).textTheme.titleLarge),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: Paddings.low.value),
-              child: TextButton(
-                onPressed: vm.clearRecentSearches,
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                  ),
-                ),
-                child: Text(StringConstants.clear,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: ColorConstants.iconYellow)),
-              ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(0),
-            itemCount: itemList!.length,
-            itemBuilder: (context, index) {
-              final item = itemList[index];
-              return SizedBox(
-                height: listTileHeight,
-                child: SearchTile(
-                  item: item,
-                  onTap: () {
-                    vm.addToHistory(item);
-                    navigation.launchDependingOnMediaType(
-                      mediaType: item.mediaType,
-                      mediaID: item.id,
-                      mediaTitle: item.name,
-                      context: context,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 }

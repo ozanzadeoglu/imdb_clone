@@ -1,9 +1,9 @@
 part of '../search_view.dart';
 
-class SearchTile extends StatelessWidget {
+class _SearchTile extends StatelessWidget {
   final SimpleListTileMedia item;
   final VoidCallback? onTap;
-  const SearchTile({super.key, required this.item, this.onTap});
+  const _SearchTile({required this.item, this.onTap});
 
   @override
   Widget build(BuildContext context) {
