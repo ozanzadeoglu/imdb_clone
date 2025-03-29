@@ -33,18 +33,28 @@ class TvSeriesDetailsView extends StatefulWidget {
 
 class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
   final ITvSeriesService _service = TvSeriesService();
+  late final Future<TVSeries?> tvSeries;
+  late final Future<List<SimpleCredit>?> tvSeriesCredits;
 
-  Future<TVSeries?> fetchTVSeriesDetails(int tvSeriesID) async {
-    final response =
-        await _service.fetchTVSeriesDetailsWithID(tvSeriesID: tvSeriesID);
+  @override
+  void initState() {
+    super.initState();
+    tvSeries = fetchTVSeriesDetails();
+    tvSeriesCredits = fetchCredits();
+  }
+
+  Future<TVSeries?> fetchTVSeriesDetails() async {
+    final response = await _service.fetchTVSeriesDetailsWithID(
+        tvSeriesID: widget.tvSeriesID);
     if (response != null) {
       return response;
     }
     return null;
   }
 
-  Future<List<SimpleCredit>?> fetchCredits(int tvSeriesID) async {
-    final response = await _service.fetchCreditsWithID(tvSeriesID: tvSeriesID);
+  Future<List<SimpleCredit>?> fetchCredits() async {
+    final response =
+        await _service.fetchCreditsWithID(tvSeriesID: widget.tvSeriesID);
     if (response != null) {
       return response;
     }
@@ -58,7 +68,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.tvSeriesName), centerTitle: false),
       body: FutureBuilder(
-        future: fetchTVSeriesDetails(widget.tvSeriesID),
+        future: tvSeries,
         builder: (context, AsyncSnapshot<TVSeries?> snapshot) {
           if (snapshot.hasData) {
             final tvSeries = snapshot.data;
@@ -122,7 +132,12 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-                  castPosterCardListView(tvSeries),
+
+                  PosterCardWrapper<SimpleCredit>(
+                    title: StringConstants.cast,
+                    future: tvSeriesCredits,
+                  ),
+
                 ],
               ),
             );
@@ -133,20 +148,4 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
       ),
     );
   }
-
-  FutureBuilder<List<SimpleCredit>?> castPosterCardListView(TVSeries tvSeries) {
-    return FutureBuilder(
-      future: fetchCredits(tvSeries.id!),
-      builder: (context, AsyncSnapshot<List<SimpleCredit>?> snapshot) {
-        if (snapshot.hasData) {
-          final actorList = snapshot.data;
-          return PosterCardWrapper<SimpleCredit>(
-              title: StringConstants.cast, list: actorList);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
 }
-

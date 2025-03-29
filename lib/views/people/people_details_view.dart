@@ -12,17 +12,31 @@ import 'package:imdb_app/models/poster_card_media.dart';
 import 'package:imdb_app/network_manager/people_service.dart';
 import 'package:kartal/kartal.dart';
 
-class PeopleDetailsView extends StatelessWidget {
+class PeopleDetailsView extends StatefulWidget {
   final int peopleID;
   final String peopleName;
-  PeopleDetailsView(
+  const PeopleDetailsView(
       {super.key, required this.peopleName, required this.peopleID});
 
-  final IPeopleService _service = PeopleService();
+  @override
+  State<PeopleDetailsView> createState() => _PeopleDetailsViewState();
+}
 
-  Future<People?> fetchPersonDetails(int peopleID) async {
+class _PeopleDetailsViewState extends State<PeopleDetailsView> {
+  final IPeopleService _service = PeopleService();
+  late final Future<People?> people;
+  late final Future<List<PosterCardMedia>?> knownForList;
+
+  @override
+  initState(){
+    super.initState();
+    people = fetchPersonDetails();
+    knownForList = fetchKnownList();
+  }
+
+  Future<People?> fetchPersonDetails() async {
     final response =
-        await _service.fetchPeopleDetailsWithID(peopleID: peopleID);
+        await _service.fetchPeopleDetailsWithID(peopleID: widget.peopleID);
     if (response != null) {
       return response;
     }
@@ -30,7 +44,7 @@ class PeopleDetailsView extends StatelessWidget {
   }
 
   Future<List<PosterCardMedia>?> fetchKnownList() async {
-    final response = await _service.fetchPeopleKnownFor(peopleName: peopleName);
+    final response = await _service.fetchPeopleKnownFor(peopleName: widget.peopleName);
 
     if (response != null) {
       return response;
@@ -41,9 +55,9 @@ class PeopleDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(peopleName), centerTitle: false),
+      appBar: AppBar(title: Text(widget.peopleName), centerTitle: false),
       body: FutureBuilder(
-        future: fetchPersonDetails(peopleID),
+        future: people,
         builder: (context, AsyncSnapshot<People?> snapshot) {
           if (snapshot.hasData) {
             final people = snapshot.data!;
@@ -59,7 +73,10 @@ class PeopleDetailsView extends StatelessWidget {
                     child: ExpanableBiographyContainer(
                         biography: people.biography),
                   ),
-                  knownForPosterCardListView(),
+                  PosterCardWrapper<PosterCardMedia>(
+                    title: StringConstants.peopleDetailsKnownFor,
+                    future: knownForList,
+                  ),
                 ],
               ),
             );
@@ -68,23 +85,6 @@ class PeopleDetailsView extends StatelessWidget {
           }
         },
       ),
-    );
-  }
-
-  FutureBuilder<List<PosterCardMedia>?> knownForPosterCardListView() {
-    return FutureBuilder(
-      future: fetchKnownList(),
-      builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
-        if (snapshot.hasData) {
-          final knownForList = snapshot.data;
-          return PosterCardWrapper<PosterCardMedia>(
-            title: StringConstants.peopleDetailsKnownFor,
-            list: knownForList,
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
     );
   }
 }

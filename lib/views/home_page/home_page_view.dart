@@ -58,7 +58,6 @@ class _HomePageViewState extends State<HomePageView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               mq.orientation == Orientation.portrait
                   ? SizedBox(
                       height: context.sized.width * 2 / 3 +
@@ -66,17 +65,23 @@ class _HomePageViewState extends State<HomePageView> {
                       child: _topSlidingView(),
                     )
                   : SizedBox.shrink(),
-
+                  
               Padding(
                 padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
-                child: trendingTodayPoster(),
+                child: PosterCardWrapper<PosterCardMedia>(
+                  title: StringConstants.trendingToday,
+                  future: trendingAsPosterCard,
+                ),
               ),
 
               Padding(
                 padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),
-                child: popularPeopleView(),
+                child: PosterCardWrapper<PosterCardMedia>(
+                  title: StringConstants.popularPeople,
+                  future: popularPeople,
+                ),
               ),
-              
+
             ],
           ),
         ),
@@ -103,40 +108,6 @@ class _HomePageViewState extends State<HomePageView> {
           );
         } else {
           return const LoadingWidget();
-        }
-      },
-    );
-  }
-
-  FutureBuilder<List<PosterCardMedia>?> trendingTodayPoster() {
-    return FutureBuilder(
-      future: trendingAsPosterCard,
-      builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
-        if (snapshot.hasData) {
-          final trendingList = snapshot.data;
-          return PosterCardWrapper<PosterCardMedia>(
-            title: StringConstants.trendingToday,
-            list: trendingList,
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-
-  FutureBuilder<List<PosterCardMedia>?> popularPeopleView() {
-    return FutureBuilder(
-      future: popularPeople,
-      builder: (context, AsyncSnapshot<List<PosterCardMedia>?> snapshot) {
-        if (snapshot.hasData) {
-          final popularList = snapshot.data;
-          return PosterCardWrapper<PosterCardMedia>(
-            title: StringConstants.popularPeople,
-            list: popularList,
-          );
-        } else {
-          return const SizedBox.shrink();
         }
       },
     );

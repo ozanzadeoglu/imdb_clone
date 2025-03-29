@@ -30,17 +30,27 @@ class MovieDetailsView extends StatefulWidget {
 
 class _MovieDetailsViewState extends State<MovieDetailsView> {
   final IMovieService _service = MovieService();
+  late final Future<Movie?> movie;
+  late final Future<List<SimpleCredit>?> movieCredits;
 
-  Future<Movie?> fetchMovieDetails(int movieID) async {
-    final response = await _service.fetchMovieDetailsWithID(movieID: movieID);
+  @override
+  void initState() {
+    super.initState();
+    movie = fetchMovieDetails();
+    movieCredits = fetchCredits();
+  }
+
+  Future<Movie?> fetchMovieDetails() async {
+    final response =
+        await _service.fetchMovieDetailsWithID(movieID: widget.movieID);
     if (response != null) {
       return response;
     }
     return null;
   }
 
-  Future<List<SimpleCredit>?> fetchCredits(int movieID) async {
-    final response = await _service.fetchCreditsWithID(movieID: movieID);
+  Future<List<SimpleCredit>?> fetchCredits() async {
+    final response = await _service.fetchCreditsWithID(movieID: widget.movieID);
     if (response != null) {
       return response;
     }
@@ -54,7 +64,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.movieTitle), centerTitle: false),
       body: FutureBuilder(
-        future: fetchMovieDetails(widget.movieID),
+        future: movie,
         builder: (context, AsyncSnapshot<Movie?> snapshot) {
           if (snapshot.hasData) {
             final movie = snapshot.data;
@@ -117,20 +127,9 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
                     child: Divider(),
                   ),
-                  FutureBuilder(
-                    future: fetchCredits(movie.id!),
-                    builder:
-                        (context, AsyncSnapshot<List<SimpleCredit>?> snapshot) {
-                      if (snapshot.hasData) {
-                        final actorList = snapshot.data;
-                        return PosterCardWrapper<SimpleCredit>(
-                          title: StringConstants.cast,
-                          list: actorList,
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
+                  PosterCardWrapper<SimpleCredit>(
+                    title: StringConstants.cast,
+                    future: movieCredits,
                   ),
                 ],
               ),
@@ -143,4 +142,3 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
     );
   }
 }
-

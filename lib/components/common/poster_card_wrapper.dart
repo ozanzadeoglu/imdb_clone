@@ -8,54 +8,69 @@ import 'package:imdb_app/models/abstracts/base_poster_card.dart';
 class PosterCardWrapper<T extends BasePosterCard> extends StatelessWidget {
   final String title;
   final String? description;
-  final List<T>? list;
+  final Future<List<T>?> future;
 
   const PosterCardWrapper({
     super.key,
     required this.title,
     this.description,
-    required this.list,
+    required this.future,
   });
-
+//list != null && list!.isNotEmpty ?
   @override
   Widget build(BuildContext context) {
-    return list != null && list!.isNotEmpty ? SafeArea(
-      top: false,
-      child: Container(
-        color: ColorConstants.thamarBlack,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: Paddings.lowHigh.value, vertical: Paddings.low.value),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: Paddings.low.value),
-                    child: const _TitleIcon(),
-                  ),
-                  Text(title, style: Theme.of(context).textTheme.headlineLarge),
-                ],
+    return FutureBuilder(
+      future: future,
+      builder: (context, AsyncSnapshot<List<T>?> snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final list = snapshot.data;
+          return SafeArea(
+            top: false,
+            child: Container(
+              color: ColorConstants.thamarBlack,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: Paddings.lowHigh.value,
+                    vertical: Paddings.low.value),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: Paddings.low.value),
+                          child: const _TitleIcon(),
+                        ),
+                        Text(title,
+                            style: Theme.of(context).textTheme.headlineLarge),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18.0),
+                      child: _DescriptionText(description: description),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: Paddings.low.value),
+                      child: HorizontalPosterCardList<T>(list: list),
+                    ),
+                  ],
+                ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 18.0),
-                child: _DescriptionText(description: description),
-              ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                child: HorizontalPosterCardList<T>(list: list),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ) : const SizedBox.shrink();
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return SizedBox.shrink();
+        } else {
+          return SizedBox.shrink();
+        }
+      },
+    );
   }
 }
 
-class HorizontalPosterCardList<T extends BasePosterCard> extends StatelessWidget {
+class HorizontalPosterCardList<T extends BasePosterCard>
+    extends StatelessWidget {
   const HorizontalPosterCardList({
     super.key,
     required this.list,
@@ -128,7 +143,6 @@ class _TitleIcon extends StatelessWidget {
     );
   }
 }
-
 
 class _CustomListView extends StatelessWidget {
   final Widget prototype;

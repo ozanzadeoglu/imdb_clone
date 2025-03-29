@@ -13,7 +13,7 @@ import 'package:imdb_app/views/home_page/home_page_view.dart';
 import 'package:imdb_app/views/movie/movie_details_view.dart';
 import 'package:imdb_app/views/people/people_details_view.dart';
 import 'package:imdb_app/views/search/search_view.dart';
-import 'package:imdb_app/views/tv_series/tv_series_details_view.dart';
+import 'package:imdb_app/views/tv_series/details/tv_series_details_view.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_view.dart';
 import 'package:provider/provider.dart';
 
