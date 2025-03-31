@@ -91,7 +91,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                           child: CustomBackdropNetworkImage(
                               path: movie.backdropPath),
                         )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -112,7 +112,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                    child: Divider(),
+                    child: const Divider(),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -125,7 +125,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                    child: Divider(),
+                    child: const Divider(),
                   ),
                   PosterCardWrapper<SimpleCredit>(
                     title: StringConstants.cast,

@@ -40,8 +40,8 @@ class CustomPosterNetworkImage extends StatelessWidget {
             height: height,
             imageUrl: networkImagePath,
             fit: BoxFit.cover,
-            fadeInDuration: Duration(microseconds: 0),
-            fadeOutDuration:Duration(microseconds: 0),
+            fadeInDuration: const Duration(microseconds: 0),
+            fadeOutDuration:const Duration(microseconds: 0),
             placeholder: (context, url) => Image.asset(
               placeholderPath,
               fit: BoxFit.fill,

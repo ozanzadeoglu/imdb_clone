@@ -60,9 +60,9 @@ class PosterCardWrapper<T extends BasePosterCard> extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasError) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         } else {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
       },
     );

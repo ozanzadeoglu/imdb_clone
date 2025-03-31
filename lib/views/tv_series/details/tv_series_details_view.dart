@@ -97,7 +97,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                           child: CustomBackdropNetworkImage(
                               path: tvSeries.backdropPath),
                         )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
@@ -117,7 +117,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                    child: Divider(),
+                    child: const Divider(),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -130,7 +130,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                    child: Divider(),
+                    child: const Divider(),
                   ),
 
                   PosterCardWrapper<SimpleCredit>(

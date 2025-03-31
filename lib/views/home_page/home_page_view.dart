@@ -64,7 +64,7 @@ class _HomePageViewState extends State<HomePageView> {
                           context.sized.height * 0.05,
                       child: _topSlidingView(),
                     )
-                  : SizedBox.shrink(),
+                  : const SizedBox.shrink(),
                   
               Padding(
                 padding: EdgeInsets.symmetric(vertical: Paddings.lowHigh.value),

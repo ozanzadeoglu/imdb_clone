@@ -17,8 +17,8 @@ class _CustomSearchBarState extends State<_CustomSearchBar> {
         Expanded(
           flex: 3,
           child: TextField(
-            style: TextStyle(color: Colors.black),
-            decoration: InputDecoration(
+            style: const TextStyle(color: Colors.black),
+            decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
               prefixIconColor: ColorConstants.thamarBlack,

@@ -139,6 +139,6 @@ class _SeasonEpisodesList extends StatelessWidget {
               );
             },
           )
-        : LoadingWidget();
+        : const LoadingWidget();
   }
 }

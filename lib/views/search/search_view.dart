@@ -31,8 +31,8 @@ class SearchView extends StatelessWidget {
           centerTitle: false,
           titleSpacing: 0,
           toolbarHeight: kToolbarHeight + 18,
-          title: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
+          title: const Padding(
+            padding: EdgeInsets.fromLTRB(8, 6, 8, 12),
             child: _CustomSearchBar(),
           ),
         ),

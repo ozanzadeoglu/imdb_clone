@@ -16,7 +16,7 @@ class _SlideableGenreState extends State<SlideableGenre> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       shrinkWrap: true,
       itemCount: widget.genreList.length,
       scrollDirection: Axis.horizontal,

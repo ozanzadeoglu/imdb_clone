@@ -29,8 +29,8 @@ class CustomBackdropNetworkImage extends StatelessWidget {
         //   fit: BoxFit.fill,
         // )
         : CachedNetworkImage(
-            fadeInDuration: Duration(microseconds: 0),
-            fadeOutDuration: Duration(microseconds: 0),
+            fadeInDuration: const Duration(microseconds: 0),
+            fadeOutDuration: const Duration(microseconds: 0),
             imageUrl: networkImagePath,
             placeholder: (context, url) => Image.asset(
               //parents have constraints, so height and width is determined
@@ -44,7 +44,7 @@ class CustomBackdropNetworkImage extends StatelessWidget {
               placeholderPath,
               fit: BoxFit.fill,
             ),
-            errorWidget: (context, url, error) => SizedBox.shrink(),
+            errorWidget: (context, url, error) => const SizedBox.shrink(),
           );
   }
 }
