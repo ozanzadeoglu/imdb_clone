@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:imdb_app/components/custom_navigation_bar.dart';
 import 'package:imdb_app/constants/box_names.dart';
 import 'package:imdb_app/constants/color_constants.dart';
+import 'package:imdb_app/views/bookmark/bookmark_view.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
@@ -57,6 +58,11 @@ class MyApp extends StatelessWidget {
                     create: (_) => SearchViewController(),
                     child: const SearchView());
               }),
+          GoRoute(
+            path: '/bookmark',
+            name: "bookmark",
+            builder: (context, state) => const BookmarkView(),
+          ),
           GoRoute(
             path: '/movie/:id',
             name: 'movieDetails',
