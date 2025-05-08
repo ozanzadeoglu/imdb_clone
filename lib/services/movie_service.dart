@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:imdb_app/enums/media_types.dart';
 import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/models/simple_credit.dart';
-import 'package:imdb_app/network_manager/credits_mixin.dart';
-import 'package:imdb_app/network_manager/dio_client.dart';
+import 'package:imdb_app/services/credits_mixin.dart';
+import 'package:imdb_app/services/dio_client.dart';
 
 abstract class IMovieService{
   Future<Movie?> fetchMovieDetailsWithID({required int movieID});

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:imdb_app/models/simple_media.dart';
 import 'package:imdb_app/models/poster_card_media.dart';
-import 'package:imdb_app/network_manager/dio_client.dart';
+import 'package:imdb_app/services/dio_client.dart';
 
 class TrendingService {
     final Dio _dio = DioClient.instance.dio;

@@ -9,7 +9,7 @@ import 'package:imdb_app/enums/image_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/people.dart';
 import 'package:imdb_app/models/poster_card_media.dart';
-import 'package:imdb_app/network_manager/people_service.dart';
+import 'package:imdb_app/services/people_service.dart';
 import 'package:kartal/kartal.dart';
 
 part 'widgets/_image_and_info.dart';
