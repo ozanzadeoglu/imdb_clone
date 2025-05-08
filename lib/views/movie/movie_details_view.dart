@@ -12,7 +12,7 @@ import 'package:imdb_app/enums/other_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/models/simple_credit.dart';
-import 'package:imdb_app/network_manager/movie_service.dart';
+import 'package:imdb_app/services/movie_service.dart';
 import 'package:kartal/kartal.dart';
 
 part 'widgets/_title_and_info.dart';
