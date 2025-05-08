@@ -12,10 +12,11 @@ class _ImageAndInfoRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomPosterNetworkImage(
+        BookmarkPoster(
           path: people.imagePath,
           height: ImageSizes.detailsHeight.value,
           width: ImageSizes.detailsWidth.value,
+          isBookmarked: null,
         ),
         SizedBox(width: context.sized.lowValue),
         Expanded(

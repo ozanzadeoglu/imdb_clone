@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imdb_app/components/common/custom_poster_network_image.dart';
+import 'package:imdb_app/components/media/bookmark_poster.dart';
 import 'package:imdb_app/enums/image_sizes.dart';
 import 'package:kartal/kartal.dart';
 
@@ -15,10 +15,11 @@ class PosterAndOverviewRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomPosterNetworkImage(
+        BookmarkPoster(
           path: posterPath,
           height: ImageSizes.detailsHeight.value,
           width: ImageSizes.detailsWidth.value,
+          isBookmarked: null,
         ),
         SizedBox(width: context.sized.lowValue),
         Expanded(
