@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:imdb_app/local_database_managers/hive_manager.dart';
 import 'package:imdb_app/local_database_managers/list_tile_media_manager.dart';
-import 'package:imdb_app/models/simple_list_tile_media.dart';
-import 'package:imdb_app/models/simple_list_tile_media_history.dart';
+import 'package:imdb_app/models/search/simple_list_tile_media.dart';
+import 'package:imdb_app/models/search/simple_list_tile_media_history.dart';
 import 'package:imdb_app/services/search_service.dart';
 
 class SearchViewController with ChangeNotifier {

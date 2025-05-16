@@ -6,7 +6,7 @@ import 'package:imdb_app/enums/media_types.dart';
 import 'package:imdb_app/extensions/better_display.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
-import 'package:imdb_app/models/simple_list_tile_media.dart';
+import 'package:imdb_app/models/search/simple_list_tile_media.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:provider/provider.dart';
 

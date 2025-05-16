@@ -9,7 +9,7 @@ import 'package:imdb_app/views/bookmark/bookmark_view.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
-import 'package:imdb_app/models/simple_list_tile_media.dart';
+import 'package:imdb_app/models/search/simple_list_tile_media.dart';
 import 'package:imdb_app/views/home_page/home_page_view.dart';
 import 'package:imdb_app/views/movie/movie_details_view.dart';
 import 'package:imdb_app/views/people/people_details_view.dart';
@@ -18,7 +18,7 @@ import 'package:imdb_app/views/tv_series/details/tv_series_details_view.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_view.dart';
 import 'package:provider/provider.dart';
 
-import 'models/simple_list_tile_media_history.dart';
+import 'models/search/simple_list_tile_media_history.dart';
 
 void main() async {
   await Hive.initFlutter();

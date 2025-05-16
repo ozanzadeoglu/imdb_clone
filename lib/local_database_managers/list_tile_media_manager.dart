@@ -1,6 +1,6 @@
 import 'package:imdb_app/constants/box_names.dart';
 import 'package:imdb_app/local_database_managers/hive_manager.dart';
-import 'package:imdb_app/models/simple_list_tile_media_history.dart';
+import 'package:imdb_app/models/search/simple_list_tile_media_history.dart';
 
 class ListTileMediaManager extends IHiveManager<SimpleListTileMediaHistory> {
   ListTileMediaManager() : super(BoxNames.resentSearchBox);
