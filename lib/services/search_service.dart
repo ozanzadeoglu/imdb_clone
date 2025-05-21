@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:imdb_app/models/simple_list_tile_media.dart';
+import 'package:imdb_app/models/search/simple_list_tile_media.dart';
 import 'package:imdb_app/services/dio_client.dart';
 
 

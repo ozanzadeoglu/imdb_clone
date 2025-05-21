@@ -2,7 +2,7 @@
 import 'package:hive/hive.dart';
 import 'simple_list_tile_media.dart';
 
-part 'simple_list_tile_media_history.g.dart'; // Must match exactly
+part 'simple_list_tile_media_history.g.dart'; 
 
 @HiveType(typeId: 2) // Unique type ID
 class SimpleListTileMediaHistory {

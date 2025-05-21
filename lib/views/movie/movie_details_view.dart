@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:imdb_app/components/common/custom_backdrop_network_image.dart';
 import 'package:imdb_app/components/common/loading_widget.dart';
+import 'package:imdb_app/components/media/bookmark_button.dart';
 import 'package:imdb_app/components/media/grey_info_label.dart';
 import 'package:imdb_app/components/media/popularity_row.dart';
 import 'package:imdb_app/components/common/poster_card_wrapper.dart';
@@ -32,6 +33,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
   final IMovieService _service = MovieService();
   late final Future<Movie?> movie;
   late final Future<List<SimpleCredit>?> movieCredits;
+  bool isBookmarked = false;
 
   @override
   void initState() {
@@ -111,7 +113,23 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Paddings.medium.value,
+                      vertical: Paddings.low.value,
+                    ),
+                    child: BookmarkButton(
+                      isBookmarked: isBookmarked,
+                      onTap: () {
+                        setState(() {
+                          isBookmarked = !isBookmarked;
+                          print(isBookmarked);
+                        });
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: Paddings.lowlow.value),
                     child: const Divider(),
                   ),
                   Padding(
