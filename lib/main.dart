@@ -5,6 +5,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:imdb_app/components/custom_navigation_bar.dart';
 import 'package:imdb_app/constants/box_names.dart';
 import 'package:imdb_app/constants/color_constants.dart';
+import 'package:imdb_app/enums/media_types.dart';
+import 'package:imdb_app/models/bookmark/bookmarked_movie.dart';
+import 'package:imdb_app/models/bookmark/bookmarked_people.dart';
+import 'package:imdb_app/models/bookmark/bookmarked_tv_series.dart';
+import 'package:imdb_app/models/genre.dart';
+import 'package:imdb_app/models/movie.dart';
+import 'package:imdb_app/models/people.dart';
+import 'package:imdb_app/models/tv_series.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
@@ -22,11 +30,28 @@ import 'models/search/simple_list_tile_media_history.dart';
 
 void main() async {
   await Hive.initFlutter();
+
+  //Search history adapters
   Hive.registerAdapter(SimpleListTileMediaHistoryAdapter());
   Hive.registerAdapter(SimpleListTileMediaAdapter());
+
+  //Media related adapters
+  Hive.registerAdapter(MediaTypesAdapter());
+  Hive.registerAdapter(GenreAdapter());
+  Hive.registerAdapter(MovieAdapter());
+  Hive.registerAdapter(TVSeriesAdapter());
+  Hive.registerAdapter(PeopleAdapter());
+  //Bookmark adapters
+  Hive.registerAdapter(BookmarkedMovieAdapter());
+  Hive.registerAdapter(BookmarkedTvSeriesAdapter());
+  Hive.registerAdapter(BookmarkedPeopleAdapter());
+
+  
+
   await Hive.openBox<SimpleListTileMediaHistory>(BoxNames.resentSearchBox);
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

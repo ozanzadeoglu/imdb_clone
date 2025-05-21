@@ -1,14 +1,36 @@
+import 'package:imdb_app/constants/hive_adapters.dart';
 import 'package:imdb_app/constants/string_constants.dart';
+import 'package:hive/hive.dart';
 
+part 'people.g.dart';
+
+@HiveType(typeId: HiveAdapters.people)
 class People {
-  final int? id;
+  @HiveField(0)
+  final int? id; // This will be used to form the BookmarkEntity ID
+
+  @HiveField(1)
   final String? name;
+
+  @HiveField(2)
   final String? knownForDepartment;
+
+  @HiveField(3)
   final String? birthday;
+
+  @HiveField(4)
   final String? deathDay;
+
+  @HiveField(5)
   final String? biography;
+
+  @HiveField(6)
   final String? imagePath;
+
+  @HiveField(7)
   final String? gender;
+
+  @HiveField(8)
   final String? placeOfBirth;
 
   People(
@@ -38,16 +60,15 @@ class People {
     }
 
     return People(
-        id: json['id'] as int?,
-        name: json['name'] as String?,
-        knownForDepartment: json['known_for_department'] as String?,
-        birthday: json['birthday'] as String?,
-        deathDay: json['deathday'] as String?,
-        biography: json['biography'] as String?,
-        imagePath: json['profile_path'] as String?,
-        gender: genderNumToString(json['gender'] as int?),
-        placeOfBirth: json['place_of_birth'] as String?,
-        );
-      
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      knownForDepartment: json['known_for_department'] as String?,
+      birthday: json['birthday'] as String?,
+      deathDay: json['deathday'] as String?,
+      biography: json['biography'] as String?,
+      imagePath: json['profile_path'] as String?,
+      gender: genderNumToString(json['gender'] as int?),
+      placeOfBirth: json['place_of_birth'] as String?,
+    );
   }
 }

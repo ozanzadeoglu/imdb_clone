@@ -1,21 +1,55 @@
+import 'package:imdb_app/constants/hive_adapters.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/models/genre.dart';
+import 'package:hive/hive.dart';
 
+part 'tv_series.g.dart';
+
+@HiveType(typeId: HiveAdapters.tvSeries)
 class TVSeries {
+  @HiveField(0)
   final String? backdropPath;
+
+  @HiveField(1)
   final String? firstAirDate;
+
+  @HiveField(2)
   final List<Genre>? genres;
+
+  @HiveField(3)
   final int? id;
+
+  @HiveField(4)
   final bool? inProduction;
+
+  @HiveField(5)
   final String? lastAirDate;
+
+  @HiveField(6)
   final String? name; //title
+
+  @HiveField(7)
   final int? numberOfEpisodes;
+
+  @HiveField(8)
   final int? numberOfSeasons;
+
+  @HiveField(9)
   final String? overview;
+
+  @HiveField(10)
   final double popularity;
+
+  @HiveField(11)
   final String? posterPath;
+
+  @HiveField(12)
   final String? status;
+
+  @HiveField(13)
   final double voteAverage;
+
+  @HiveField(14)
   final int voteCount;
 
   TVSeries({
@@ -61,4 +95,3 @@ class TVSeries {
     );
   }
 }
-

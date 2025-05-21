@@ -1,20 +1,53 @@
+import 'package:imdb_app/constants/hive_adapters.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/models/genre.dart';
+import 'package:hive/hive.dart';
+
+part 'movie.g.dart';
+
 //for movie details
+@HiveType(typeId: HiveAdapters.movie)
 class Movie {
+   @HiveField(0)
   final String? backdropPath;
+
+  @HiveField(1)
   final int? budget;
+
+  @HiveField(2)
   final List<Genre>? genres;
+
+  @HiveField(3)
   final int? id;
+
+  @HiveField(4)
   final String? originalLanguage;
+
+  @HiveField(5)
   final String? originalTitle;
+
+  @HiveField(6)
   final String? overview;
+
+  @HiveField(7)
   final double popularity;
+
+  @HiveField(8)
   final String? posterPath;
+
+  @HiveField(9)
   final String? releaseDate;
+
+  @HiveField(10)
   final String? status;
+
+  @HiveField(11)
   final String? title;
+
+  @HiveField(12)
   final double voteAverage;
+
+  @HiveField(13)
   final int voteCount;
 
   Movie({
@@ -57,5 +90,4 @@ class Movie {
     );
   }
 }
-
 
