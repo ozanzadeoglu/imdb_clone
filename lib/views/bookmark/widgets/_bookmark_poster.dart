@@ -1,38 +1,40 @@
 part of "../bookmark_view.dart";
 
-class PosterCard<T extends BookmarkEntity> extends StatelessWidget {
+class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
   final String? imagePath;
-  final String? title;
-  final String? info;
-  final int? id;
-  final String? mediaType;
-  final double? rating;
   final VoidCallback? onTap;
-  final bool? isBookmarked;
 
-  const PosterCard({
+  final Movie? movie;
+  final TVSeries? tvSeries;
+  final People? people;
+
+  const _BookmarkCard({
     super.key,
     required this.imagePath,
-    required this.title,
-    required this.info,
-    required this.id,
-    required this.mediaType,
-    this.rating,
     required this.onTap,
-    required this.isBookmarked,
+    this.movie,
+    this.tvSeries,
+    this.people,
   });
 
-  // factory PosterCard.fromType({required data}) {
-  //   if (T == BookmarkedMovie) {
+  factory _BookmarkCard.fromType({required item, required onTap}) {
+    if (item is BookmarkedMovie) {
+      return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+    }
+    // else if (item is BookmarkedTvSeries){
+    //   return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+    // }
+    else {
+      return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+    }
+  }
 
-  //   }
-  //   else if (T == BookmarkedTvSeries){
-
-  //   }
-  //   else {
-
-  //   }
-  // }
+  _BookmarkCard.fromBookmarkedMovie(
+      {super.key, required this.onTap, required BookmarkedMovie item})
+      : imagePath = item.movie.posterPath,
+        movie = item.movie,
+        tvSeries = null,
+        people = null;
 
   //   PosterCard.fromCredit({super.key, required SimpleCredit simpleCredit})
   //     : id = simpleCredit.id,
@@ -52,34 +54,27 @@ class PosterCard<T extends BookmarkEntity> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => NavigationUtils().launchDependingOnMediaType(
-        context: context,
-        mediaType: mediaType,
-        mediaID: id,
-        mediaTitle: title,
-      ),
-      child: SizedBox(
-        width: 140,
-        child: Container(
-          decoration: wrapperContainerDecoration(context),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: const BoxDecoration(
+            border:
+                Border(bottom: BorderSide(color: ColorConstants.kettleman))),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: Paddings.medium.value, vertical: Paddings.low.value),
+          child: Row(
             children: [
-              _BookmarkPoster(
-                imagePath: imagePath,
-                isBookmarked: isBookmarked ?? true,
-                onTap: onTap,
+              AspectRatio(
+                aspectRatio: 1 / 1.5,
+                child: CustomPosterNetworkImage(path: imagePath),
               ),
-              Padding(
-                padding: EdgeInsets.all(Paddings.low.value),
-                child: _PosterCardInfoColumn(
-                  title: title,
-                  info: info,
-                  rating: rating,
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(left: Paddings.low.value),
+                  child: columnLayoutDependingMedia(context),
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -87,23 +82,173 @@ class PosterCard<T extends BookmarkEntity> extends StatelessWidget {
     );
   }
 
-  BoxDecoration wrapperContainerDecoration(BuildContext context) {
-    return BoxDecoration(
-      color: ColorConstants.offBlack,
-      borderRadius: BorderRadius.circular(context.sized.normalValue),
-    );
+  Column columnLayoutDependingMedia(BuildContext context) {
+    if (movie != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            movie!.title ?? "",
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Colors.white),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Row(
+            children: [
+              Text(MediaTypes.movie.value.capitalizeFirstLetter()),
+              movie!.releaseDate != null && movie!.releaseDate!.isNotEmpty
+                  ? Text(", ${movie!.releaseDate!.extractYear()}")
+                  : const SizedBox.shrink(),
+            ],
+          ),
+        ],
+      );
+    } else if (tvSeries != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            tvSeries!.name ?? "",
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Colors.white),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Row(
+            children: [
+              const Text(StringConstants.tvSeries),
+              tvSeries!.firstAirDate != null && tvSeries!.firstAirDate!.isNotEmpty
+                  ? Text(", ${tvSeries!.firstAirDate!.extractYear()}")
+                  : const SizedBox.shrink(),
+            ],
+          ),
+        ],
+      );
+    } else if (people != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            people!.name ?? "",
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Colors.white),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Row(
+            children: [
+              Text("${MediaTypes.person.value.capitalizeFirstLetter()}, "),
+              people!.knownForDepartment != null
+                  ? Text(people!.knownForDepartment!)
+                  : const SizedBox.shrink(),
+            ],
+          ),
+        ],
+      );
+    }
+    return const Column();
   }
+
+// class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
+//   final String? imagePath;
+//   final String? title;
+//   final String? info;
+//   final int? id;
+//   final MediaTypes mediaType;
+//   final double? rating;
+//   final VoidCallback? onTap;
+
+//   const _BookmarkCard({
+//     super.key,
+//     required this.imagePath,
+//     required this.title,
+//     required this.info,
+//     required this.id,
+//     required this.mediaType,
+//     this.rating,
+//     required this.onTap,
+//   });
+
+//   factory _BookmarkCard.fromType({required item, required onTap}) {
+//     if (item is BookmarkedMovie) {
+//       return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+//     }
+//     // else if (item is BookmarkedTvSeries){
+//     //   return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+//     // }
+//     else {
+//       return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+//     }
+//   }
+
+//    _BookmarkCard.fromBookmarkedMovie(
+//       {super.key, required this.onTap, required BookmarkedMovie item})
+//       : id = item.movie.id,
+//         imagePath = item.movie.posterPath,
+//         info = item.movie.overview,
+//         mediaType = MediaTypes.movie,
+//         rating = item.movie.voteAverage,
+//         title = item.movie.title;
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return GestureDetector(
+  //     onTap: () => NavigationUtils().launchDependingOnMediaType(
+  //       context: context,
+  //       mediaType: mediaType,
+  //       mediaID: id,
+  //       mediaTitle: title,
+  //     ),
+  //     child: SizedBox(
+  //       width: 140,
+  //       child: Container(
+  //         decoration: wrapperContainerDecoration(context),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.stretch,
+  //           children: [
+  //             _BookmarkPoster(
+  //               imagePath: imagePath,
+  //               onTap: onTap,
+  //             ),
+  //             Padding(
+  //               padding: EdgeInsets.all(Paddings.low.value),
+  //               child: _PosterCardInfoColumn(
+  //                 title: title,
+  //                 info: info,
+  //                 rating: rating,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // BoxDecoration wrapperContainerDecoration(BuildContext context) {
+  //   return BoxDecoration(
+  //     color: ColorConstants.offBlack,
+  //     borderRadius: BorderRadius.circular(context.sized.normalValue),
+  //   );
+  // }
 }
 
 class _BookmarkPoster extends StatelessWidget {
   final String? imagePath;
-  final bool isBookmarked;
   final VoidCallback? onTap;
 
-  const _BookmarkPoster(
-      {required this.imagePath,
-      required this.isBookmarked,
-      required this.onTap});
+  const _BookmarkPoster({required this.imagePath, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -117,21 +262,17 @@ class _BookmarkPoster extends StatelessWidget {
         Positioned(
           top: 0,
           left: 0,
-          child: InkWell(
-              onTap: onTap,
-              child: _ClickableBookmark(isBookmarked: isBookmarked)),
+          child: InkWell(onTap: onTap, child: const _BookmarkIcon()),
         ),
       ],
     );
   }
 }
 
-class _ClickableBookmark extends StatelessWidget {
-  final bool isBookmarked;
-  const _ClickableBookmark({required this.isBookmarked});
+class _BookmarkIcon extends StatelessWidget {
+  const _BookmarkIcon();
 
-
-  final String bookmarkPath = "assets/bookmark.png";
+  final String bookmarkImagePath = "assets/bookmark.png";
 
   @override
   Widget build(BuildContext context) {
@@ -142,65 +283,22 @@ class _ClickableBookmark extends StatelessWidget {
           padding: EdgeInsets.zero,
           width: 52,
           child: Opacity(
-            opacity: isBookmarked ? 1 : 0.6, //0.4,
+            opacity: 1,
             child: Image.asset(
-              bookmarkPath,
-              color: isBookmarked ? ColorConstants.iconYellow : null,
+              bookmarkImagePath,
+              color: ColorConstants.iconYellow,
               fit: BoxFit.fitWidth,
             ),
           ),
         ),
-        Positioned(
-          right: 15,
-          bottom: 25,
-          child: isBookmarked
-              ? const Icon(Icons.check, color: Colors.black)
-              : const Icon(Icons.add, color: Colors.white),
-        ),
+        const Positioned(
+            right: 15,
+            bottom: 25,
+            child: Icon(Icons.check, color: Colors.black)),
       ],
     );
   }
 }
-
-// Positioned(
-        //   right: 2,
-        //   bottom: 14,
-        //   child: Container(
-        //     color: Colors.red,
-        //     child: _isBookmarked
-        //         ? const Icon(Icons.check, color: Colors.black)
-        //         : const Icon(Icons.add, color: Colors.white),
-        //   ),
-        // ),
-
-// IconButton(
-//               onPressed: () {
-//                 setState(() {
-//                   _isBookmarked = !_isBookmarked;
-//                 });
-//               },
-//               isSelected: _isBookmarked,
-//               selectedIcon: const Icon(Icons.check, color: Colors.black),
-//               icon: const Icon(Icons.add, color: Colors.white),
-//             ),
-
-// class _PosterCardImage extends StatelessWidget {
-//   final String? imagePath;
-//   const _PosterCardImage({required this.imagePath});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ClipRRect(
-//       borderRadius: BorderRadius.vertical(
-//           top: Radius.circular(context.sized.normalValue)),
-//       child: CustomPosterNetworkImage(
-//         path: imagePath,
-//         height: 210,
-//         width: 140,
-//       ),
-//     );
-//   }
-// }
 
 class _PosterCardInfoColumn extends StatelessWidget {
   final String? title;
