@@ -6,7 +6,7 @@ import 'package:imdb_app/models/people.dart';
 
 part 'bookmarked_people.g.dart';
 
-@HiveType(typeId: HiveAdapters.bookmarkedPeople) // Or your numeric typeId
+@HiveType(typeId: HiveAdapters.bookmarkedPeople)
 class BookmarkedPeople extends BookmarkEntity {
   @HiveField(3)
   final People person;

@@ -7,7 +7,7 @@ part 'people.g.dart';
 @HiveType(typeId: HiveAdapters.people)
 class People {
   @HiveField(0)
-  final int? id; // This will be used to form the BookmarkEntity ID
+  final int? id;
 
   @HiveField(1)
   final String? name;
