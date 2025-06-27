@@ -7,12 +7,12 @@ class ListTileMediaManager extends IHiveManager<SimpleListTileMediaHistory> {
 
   @override
   List<SimpleListTileMediaHistory>? fetchValues() {
-    return box?.values.toList();
+    return box.values.toList();
   }
 
   @override
   Future<void> putItem(String key, SimpleListTileMediaHistory item) async {
-    await box?.put(key, item);
+    await box.put(key, item);
   }
 
 }
