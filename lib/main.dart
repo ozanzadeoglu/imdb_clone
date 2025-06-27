@@ -6,6 +6,7 @@ import 'package:imdb_app/components/custom_navigation_bar.dart';
 import 'package:imdb_app/constants/box_names.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/enums/media_types.dart';
+import 'package:imdb_app/models/bookmark/bookmark_entity.dart';
 import 'package:imdb_app/models/bookmark/bookmarked_movie.dart';
 import 'package:imdb_app/models/bookmark/bookmarked_people.dart';
 import 'package:imdb_app/models/bookmark/bookmarked_tv_series.dart';
@@ -14,6 +15,7 @@ import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/models/people.dart';
 import 'package:imdb_app/models/tv_series.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view.dart';
+import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
@@ -46,12 +48,10 @@ void main() async {
   Hive.registerAdapter(BookmarkedTvSeriesAdapter());
   Hive.registerAdapter(BookmarkedPeopleAdapter());
 
-  
-
+  await Hive.openBox<BookmarkEntity>(BoxNames.bookmarkBox);
   await Hive.openBox<SimpleListTileMediaHistory>(BoxNames.resentSearchBox);
   runApp(MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -84,10 +84,16 @@ class MyApp extends StatelessWidget {
                     child: const SearchView());
               }),
           GoRoute(
-            path: '/bookmark',
-            name: "bookmark",
-            builder: (context, state) => const BookmarkView(),
-          ),
+              path: '/bookmark',
+              name: "bookmark",
+              builder: (context, state) {
+                return ChangeNotifierProvider(
+                  create: (_) => BookmarkViewController(),
+                  child: const BookmarkView(),
+                );
+              }
+              // builder: (context, state) => const BookmarkView(),
+              ),
           GoRoute(
             path: '/movie/:id',
             name: 'movieDetails',
