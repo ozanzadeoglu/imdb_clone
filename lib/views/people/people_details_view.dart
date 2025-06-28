@@ -30,6 +30,9 @@ class _PeopleDetailsViewState extends State<PeopleDetailsView> {
     final vm = context.read<PeopleDetailsController>();
     final isLoading =
         context.select<PeopleDetailsController, bool>((vm) => vm.isLoading);
+    final isBookmarked =
+        context.select<PeopleDetailsController, bool>((vm) => vm.isBookmarked);
+
     return Scaffold(
       appBar: AppBar(title: Text(vm.peopleName), centerTitle: false),
       body: (!isLoading && vm.people != null)
@@ -53,8 +56,8 @@ class _PeopleDetailsViewState extends State<PeopleDetailsView> {
                       vertical: Paddings.low.value,
                     ),
                     child: BookmarkButton(
-                      isBookmarked: false,
-                      onTap: () {},
+                      isBookmarked: isBookmarked,
+                      onTap: vm.addOrRemoveBookmark,
                     ),
                   ),
                   Padding(
