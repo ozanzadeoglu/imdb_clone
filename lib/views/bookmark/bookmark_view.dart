@@ -9,6 +9,7 @@ import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/extensions/better_display.dart';
 import 'package:imdb_app/models/bookmark/bookmark_entity.dart';
 import 'package:imdb_app/models/bookmark/bookmarked_movie.dart';
+import 'package:imdb_app/models/bookmark/bookmarked_people.dart';
 import 'package:imdb_app/models/bookmark/bookmarked_tv_series.dart';
 import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/models/people.dart';
