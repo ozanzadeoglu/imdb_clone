@@ -31,7 +31,7 @@ class _ExpandableBiography extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: ColorConstants.offBlack,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(context.sized.height * 0.02),
+                      top: Radius.circular(Paddings.low.value),
                     ),
                   ),
                   child: Stack(
@@ -51,7 +51,7 @@ class _ExpandableBiography extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: ColorConstants.offBlack,
                     borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(context.sized.height * 0.02),
+                      bottom: Radius.circular(Paddings.low.value),
                     ),
                   ),
                   child: Expandable(
@@ -102,7 +102,7 @@ class _CollapsedBiography extends StatelessWidget {
     return ExpandableButton(
       theme: ExpandableThemeData(
         inkWellBorderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(context.sized.height * 0.02),
+          bottom: Radius.circular(Paddings.low.value),
         ),
       ),
       child: Padding(
@@ -132,7 +132,7 @@ class _ExpandedBiography extends StatelessWidget {
     return ExpandableButton(
       theme: ExpandableThemeData(
         inkWellBorderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(context.sized.height * 0.02),
+          bottom: Radius.circular(Paddings.low.value),
         ),
       ),
       child: Padding(
