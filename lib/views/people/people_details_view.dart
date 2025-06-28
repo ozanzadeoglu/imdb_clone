@@ -1,8 +1,8 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:imdb_app/components/common/custom_poster_network_image.dart';
 import 'package:imdb_app/components/common/loading_widget.dart';
 import 'package:imdb_app/components/common/poster_card_wrapper.dart';
-import 'package:imdb_app/components/media/bookmark_poster.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/image_sizes.dart';
