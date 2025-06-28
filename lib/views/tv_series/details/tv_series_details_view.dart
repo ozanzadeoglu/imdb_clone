@@ -14,65 +14,34 @@ import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/extensions/better_display.dart';
 import 'package:imdb_app/models/simple_credit.dart';
 import 'package:imdb_app/models/tv_series.dart';
-import 'package:imdb_app/services/tv_series_service.dart';
+import 'package:imdb_app/views/tv_series/details/tv_series_details_controller.dart';
 import 'package:kartal/kartal.dart';
+import 'package:provider/provider.dart';
 
 part 'widgets/_title_and_info.dart';
 part 'widgets/_episode_guide_row.dart';
 
 class TvSeriesDetailsView extends StatefulWidget {
-  final int tvSeriesID;
-  final String tvSeriesName;
 
   const TvSeriesDetailsView(
-      {super.key, required this.tvSeriesID, required this.tvSeriesName});
+      {super.key});
 
   @override
   State<TvSeriesDetailsView> createState() => _TvSeriesDetailsViewState();
 }
 
 class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
-  final ITvSeriesService _service = TvSeriesService();
-  late final Future<TVSeries?> tvSeries;
-  late final Future<List<SimpleCredit>?> tvSeriesCredits;
-
-  @override
-  void initState() {
-    super.initState();
-    tvSeries = fetchTVSeriesDetails();
-    tvSeriesCredits = fetchCredits();
-  }
-
-  Future<TVSeries?> fetchTVSeriesDetails() async {
-    final response = await _service.fetchTVSeriesDetailsWithID(
-        tvSeriesID: widget.tvSeriesID);
-    if (response != null) {
-      return response;
-    }
-    return null;
-  }
-
-  Future<List<SimpleCredit>?> fetchCredits() async {
-    final response =
-        await _service.fetchCreditsWithID(tvSeriesID: widget.tvSeriesID);
-    if (response != null) {
-      return response;
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mq = MediaQuery.of(context);
+        final vm = context.read<TvSeriesDetailsController>();
+    final isLoading =
+        context.select<TvSeriesDetailsController, bool>((vm) => vm.isLoading);
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.tvSeriesName), centerTitle: false),
-      body: FutureBuilder(
-        future: tvSeries,
-        builder: (context, AsyncSnapshot<TVSeries?> snapshot) {
-          if (snapshot.hasData) {
-            final tvSeries = snapshot.data;
-            return SingleChildScrollView(
+      appBar: AppBar(title: Text(vm.tvSeriesName), centerTitle: false),
+      body: (!isLoading && vm.tvSeries != null) ? SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -81,9 +50,9 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                       horizontal: Paddings.medium.value,
                       //vertical: Paddings.lowlow.value,
                     ),
-                    child: _TitleAndInfo(tvSeries: tvSeries!),
+                    child: _TitleAndInfo(tvSeries: vm.tvSeries!),
                   ),
-                  _EpisodeGuideRow(tvSeries: tvSeries),
+                  _EpisodeGuideRow(tvSeries: vm.tvSeries!),
                   mq.orientation == Orientation.portrait
                       ?
                       //show backdrop only when device is on portrait mode.
@@ -95,7 +64,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                             maxWidth: context.sized.width,
                           ),
                           child: CustomBackdropNetworkImage(
-                              path: tvSeries.backdropPath),
+                              path: vm.tvSeries!.backdropPath),
                         )
                       : const SizedBox.shrink(),
                   Padding(
@@ -103,8 +72,8 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.low.value),
                     child: PosterAndOverviewRow(
-                        overview: tvSeries.overview,
-                        posterPath: tvSeries.posterPath),
+                        overview: vm.tvSeries!.overview,
+                        posterPath: vm.tvSeries!.posterPath),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -112,7 +81,7 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                         vertical: Paddings.lowlow.value),
                     child: SizedBox(
                       height: OtherSizes.genreContainerHeight.value,
-                      child: SlideableGenre(genreList: tvSeries.genres!),
+                      child: SlideableGenre(genreList: vm.tvSeries!.genres!),
                     ),
                   ),
                   Padding(
@@ -124,9 +93,9 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.lowlow.value),
                     child: PopularityRow(
-                        popularity: tvSeries.popularity,
-                        voteAverage: tvSeries.voteAverage,
-                        voteCount: tvSeries.voteCount),
+                        popularity: vm.tvSeries!.popularity,
+                        voteAverage: vm.tvSeries!.voteAverage,
+                        voteCount: vm.tvSeries!.voteCount),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
@@ -135,17 +104,13 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
 
                   PosterCardWrapper<SimpleCredit>(
                     title: StringConstants.cast,
-                    future: tvSeriesCredits,
+                    future: vm.tvSeriesCredits,
                   ),
-
                 ],
               ),
-            );
-          } else {
-            return const LoadingWidget();
-          }
-        },
-      ),
+            ) : const Center(child: LoadingWidget())
+          
+      
     );
   }
 }
