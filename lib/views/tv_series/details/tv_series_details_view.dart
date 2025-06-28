@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:imdb_app/components/common/custom_backdrop_network_image.dart';
 import 'package:imdb_app/components/common/loading_widget.dart';
+import 'package:imdb_app/components/media/bookmark_button.dart';
 import 'package:imdb_app/components/media/grey_info_label.dart';
 import 'package:imdb_app/components/media/popularity_row.dart';
 import 'package:imdb_app/components/common/poster_card_wrapper.dart';
@@ -22,95 +23,98 @@ part 'widgets/_title_and_info.dart';
 part 'widgets/_episode_guide_row.dart';
 
 class TvSeriesDetailsView extends StatefulWidget {
-
-  const TvSeriesDetailsView(
-      {super.key});
+  const TvSeriesDetailsView({super.key});
 
   @override
   State<TvSeriesDetailsView> createState() => _TvSeriesDetailsViewState();
 }
 
 class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData mq = MediaQuery.of(context);
-        final vm = context.read<TvSeriesDetailsController>();
+    final vm = context.read<TvSeriesDetailsController>();
     final isLoading =
         context.select<TvSeriesDetailsController, bool>((vm) => vm.isLoading);
 
     return Scaffold(
-      appBar: AppBar(title: Text(vm.tvSeriesName), centerTitle: false),
-      body: (!isLoading && vm.tvSeries != null) ? SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Paddings.medium.value,
-                      //vertical: Paddings.lowlow.value,
+        appBar: AppBar(title: Text(vm.tvSeriesName), centerTitle: false),
+        body: (!isLoading && vm.tvSeries != null)
+            ? SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Paddings.medium.value,
+                        //vertical: Paddings.lowlow.value,
+                      ),
+                      child: _TitleAndInfo(tvSeries: vm.tvSeries!),
                     ),
-                    child: _TitleAndInfo(tvSeries: vm.tvSeries!),
-                  ),
-                  _EpisodeGuideRow(tvSeries: vm.tvSeries!),
-                  mq.orientation == Orientation.portrait
-                      ?
-                      //show backdrop only when device is on portrait mode.
-                      ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minWidth: 0,
-                            minHeight: 0,
-                            maxHeight: context.sized.width / 1.7777,
-                            maxWidth: context.sized.width,
-                          ),
-                          child: CustomBackdropNetworkImage(
-                              path: vm.tvSeries!.backdropPath),
-                        )
-                      : const SizedBox.shrink(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Paddings.medium.value,
-                        vertical: Paddings.low.value),
-                    child: PosterAndOverviewRow(
-                        overview: vm.tvSeries!.overview,
-                        posterPath: vm.tvSeries!.posterPath),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Paddings.medium.value,
-                        vertical: Paddings.lowlow.value),
-                    child: SizedBox(
-                      height: OtherSizes.genreContainerHeight.value,
-                      child: SlideableGenre(genreList: vm.tvSeries!.genres!),
+                    _EpisodeGuideRow(tvSeries: vm.tvSeries!),
+                    mq.orientation == Orientation.portrait
+                        ?
+                        //show backdrop only when device is on portrait mode.
+                        ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: 0,
+                              minHeight: 0,
+                              maxHeight: context.sized.width / 1.7777,
+                              maxWidth: context.sized.width,
+                            ),
+                            child: CustomBackdropNetworkImage(
+                                path: vm.tvSeries!.backdropPath),
+                          )
+                        : const SizedBox.shrink(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Paddings.medium.value,
+                          vertical: Paddings.low.value),
+                      child: PosterAndOverviewRow(
+                          overview: vm.tvSeries!.overview,
+                          posterPath: vm.tvSeries!.posterPath),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                    child: const Divider(),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Paddings.medium.value,
+                          vertical: Paddings.lowlow.value),
+                      child: SizedBox(
+                        height: OtherSizes.genreContainerHeight.value,
+                        child: SlideableGenre(genreList: vm.tvSeries!.genres!),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
-                        vertical: Paddings.lowlow.value),
-                    child: PopularityRow(
-                        popularity: vm.tvSeries!.popularity,
-                        voteAverage: vm.tvSeries!.voteAverage,
-                        voteCount: vm.tvSeries!.voteCount),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
-                    child: const Divider(),
-                  ),
-
-                  PosterCardWrapper<SimpleCredit>(
-                    title: StringConstants.cast,
-                    future: vm.tvSeriesCredits,
-                  ),
-                ],
-              ),
-            ) : const Center(child: LoadingWidget())
-          
-      
-    );
+                        vertical: Paddings.low.value,
+                      ),
+                      child: BookmarkButton(
+                        isBookmarked: false,
+                        onTap: () {},
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Paddings.medium.value,
+                          vertical: Paddings.lowlow.value),
+                      child: PopularityRow(
+                          popularity: vm.tvSeries!.popularity,
+                          voteAverage: vm.tvSeries!.voteAverage,
+                          voteCount: vm.tvSeries!.voteCount),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: Paddings.low.value),
+                      child: const Divider(),
+                    ),
+                    PosterCardWrapper<SimpleCredit>(
+                      title: StringConstants.cast,
+                      future: vm.tvSeriesCredits,
+                    ),
+                  ],
+                ),
+              )
+            : const Center(child: LoadingWidget()));
   }
 }
