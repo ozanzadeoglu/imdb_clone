@@ -9,85 +9,49 @@ import 'package:imdb_app/enums/image_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/people.dart';
 import 'package:imdb_app/models/poster_card_media.dart';
-import 'package:imdb_app/services/people_service.dart';
+import 'package:imdb_app/views/people/people_details_controller.dart';
 import 'package:kartal/kartal.dart';
+import 'package:provider/provider.dart';
 
 part 'widgets/_image_and_info.dart';
 part 'widgets/_expandable_biography.dart';
 
 class PeopleDetailsView extends StatefulWidget {
-  final int peopleID;
-  final String peopleName;
-  const PeopleDetailsView(
-      {super.key, required this.peopleName, required this.peopleID});
+  const PeopleDetailsView({super.key});
 
   @override
   State<PeopleDetailsView> createState() => _PeopleDetailsViewState();
 }
 
 class _PeopleDetailsViewState extends State<PeopleDetailsView> {
-  final IPeopleService _service = PeopleService();
-  late final Future<People?> people;
-  late final Future<List<PosterCardMedia>?> knownForList;
-
-  @override
-  initState(){
-    super.initState();
-    people = fetchPersonDetails();
-    knownForList = fetchKnownList();
-  }
-
-  Future<People?> fetchPersonDetails() async {
-    final response =
-        await _service.fetchPeopleDetailsWithID(peopleID: widget.peopleID);
-    if (response != null) {
-      return response;
-    }
-    return null;
-  }
-
-  Future<List<PosterCardMedia>?> fetchKnownList() async {
-    final response = await _service.fetchPeopleKnownFor(peopleName: widget.peopleName);
-
-    if (response != null) {
-      return response;
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final vm = context.read<PeopleDetailsController>();
+    final isLoading =
+        context.select<PeopleDetailsController, bool>((vm) => vm.isLoading);
     return Scaffold(
-      appBar: AppBar(title: Text(widget.peopleName), centerTitle: false),
-      body: FutureBuilder(
-        future: people,
-        builder: (context, AsyncSnapshot<People?> snapshot) {
-          if (snapshot.hasData) {
-            final people = snapshot.data!;
-            return SingleChildScrollView(
+      appBar: AppBar(title: Text(vm.peopleName), centerTitle: false),
+      body: (!isLoading && vm.people != null)
+          ? SingleChildScrollView(
               child: Column(
                 children: [
                   Padding(
                     padding: EdgeInsets.all(Paddings.medium.value),
-                    child: _ImageAndInfoRow(people: people),
+                    child: _ImageAndInfoRow(people: vm.people!),
                   ),
                   Padding(
                     padding: EdgeInsets.all(Paddings.medium.value),
-                    child: _ExpandableBiography(
-                        biography: people.biography),
+                    child:
+                        _ExpandableBiography(biography: vm.people!.biography),
                   ),
                   PosterCardWrapper<PosterCardMedia>(
                     title: StringConstants.peopleDetailsKnownFor,
-                    future: knownForList,
+                    future: vm.knownForList,
                   ),
                 ],
               ),
-            );
-          } else {
-            return const Center(child: LoadingWidget());
-          }
-        },
-      ),
+            )
+          : const Center(child: LoadingWidget()),
     );
   }
 }
