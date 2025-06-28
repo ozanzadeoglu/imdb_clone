@@ -36,7 +36,8 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
     final vm = context.read<TvSeriesDetailsController>();
     final isLoading =
         context.select<TvSeriesDetailsController, bool>((vm) => vm.isLoading);
-
+        final isBookmarked =
+        context.select<TvSeriesDetailsController, bool>((vm) => vm.isBookmarked);
     return Scaffold(
         appBar: AppBar(title: Text(vm.tvSeriesName), centerTitle: false),
         body: (!isLoading && vm.tvSeries != null)
@@ -47,7 +48,6 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
-                        //vertical: Paddings.lowlow.value,
                       ),
                       child: _TitleAndInfo(tvSeries: vm.tvSeries!),
                     ),
@@ -89,8 +89,8 @@ class _TvSeriesDetailsViewState extends State<TvSeriesDetailsView> {
                         vertical: Paddings.low.value,
                       ),
                       child: BookmarkButton(
-                        isBookmarked: false,
-                        onTap: () {},
+                        isBookmarked: isBookmarked,
+                        onTap: vm.addOrRemoveBookmark,
                       ),
                     ),
                     const Divider(),
