@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:imdb_app/components/common/custom_poster_network_image.dart';
 import 'package:imdb_app/components/common/loading_widget.dart';
 import 'package:imdb_app/components/common/poster_card_wrapper.dart';
+import 'package:imdb_app/components/media/bookmark_button.dart';
 import 'package:imdb_app/constants/color_constants.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/image_sizes.dart';
@@ -40,13 +41,30 @@ class _PeopleDetailsViewState extends State<PeopleDetailsView> {
                     child: _ImageAndInfoRow(people: vm.people!),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(Paddings.medium.value),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Paddings.medium.value,
+                        vertical: Paddings.low.value),
                     child:
                         _ExpandableBiography(biography: vm.people!.biography),
                   ),
-                  PosterCardWrapper<PosterCardMedia>(
-                    title: StringConstants.peopleDetailsKnownFor,
-                    future: vm.knownForList,
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Paddings.medium.value,
+                      vertical: Paddings.low.value,
+                    ),
+                    child: BookmarkButton(
+                      isBookmarked: false,
+                      onTap: () {},
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: Paddings.low.value,
+                    ),
+                    child: PosterCardWrapper<PosterCardMedia>(
+                      title: StringConstants.peopleDetailsKnownFor,
+                      future: vm.knownForList,
+                    ),
                   ),
                 ],
               ),
