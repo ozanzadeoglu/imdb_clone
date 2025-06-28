@@ -13,64 +13,32 @@ import 'package:imdb_app/enums/other_sizes.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/models/simple_credit.dart';
-import 'package:imdb_app/services/movie_service.dart';
+import 'package:imdb_app/views/movie/movie_details_controller.dart';
 import 'package:kartal/kartal.dart';
+import 'package:provider/provider.dart';
 
 part 'widgets/_title_and_info.dart';
 
 class MovieDetailsView extends StatefulWidget {
-  final int movieID;
-  final String movieTitle;
-
-  const MovieDetailsView(
-      {super.key, required this.movieID, required this.movieTitle});
+  const MovieDetailsView({super.key});
 
   @override
   State<MovieDetailsView> createState() => _MovieDetailsViewState();
 }
 
 class _MovieDetailsViewState extends State<MovieDetailsView> {
-  final IMovieService _service = MovieService();
-  late final Future<Movie?> movie;
-  late final Future<List<SimpleCredit>?> movieCredits;
-  bool isBookmarked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    movie = fetchMovieDetails();
-    movieCredits = fetchCredits();
-  }
-
-  Future<Movie?> fetchMovieDetails() async {
-    final response =
-        await _service.fetchMovieDetailsWithID(movieID: widget.movieID);
-    if (response != null) {
-      return response;
-    }
-    return null;
-  }
-
-  Future<List<SimpleCredit>?> fetchCredits() async {
-    final response = await _service.fetchCreditsWithID(movieID: widget.movieID);
-    if (response != null) {
-      return response;
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData mq = MediaQuery.of(context);
-
+    final vm = context.read<MovieDetailsController>();
+    final isLoading =
+        context.select<MovieDetailsController, bool>((vm) => vm.isLoading);
+    final isBookmarked =
+        context.select<MovieDetailsController, bool>((vm) => vm.isBookmarked);
     return Scaffold(
-      appBar: AppBar(title: Text(widget.movieTitle), centerTitle: false),
-      body: FutureBuilder(
-        future: movie,
-        builder: (context, AsyncSnapshot<Movie?> snapshot) {
-          if (snapshot.hasData) {
-            final movie = snapshot.data;
-            return SingleChildScrollView(
+      appBar: AppBar(title: Text(vm.movieTitle), centerTitle: false),
+      body: (!isLoading && vm.movie != null)
+          ? SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -78,7 +46,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.lowlow.value),
-                    child: _TitleAndInfo(movie: movie!),
+                    child: _TitleAndInfo(movie: vm.movie!),
                   ),
                   mq.orientation == Orientation.portrait
                       ?
@@ -91,7 +59,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                             maxWidth: context.sized.width,
                           ),
                           child: CustomBackdropNetworkImage(
-                              path: movie.backdropPath),
+                              path: vm.movie!.backdropPath),
                         )
                       : const SizedBox.shrink(),
                   Padding(
@@ -99,8 +67,8 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.low.value),
                     child: PosterAndOverviewRow(
-                      overview: movie.overview,
-                      posterPath: movie.posterPath,
+                      overview: vm.movie!.overview,
+                      posterPath: vm.movie!.posterPath,
                     ),
                   ),
                   Padding(
@@ -109,7 +77,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         vertical: Paddings.lowlow.value),
                     child: SizedBox(
                       height: OtherSizes.genreContainerHeight.value,
-                      child: SlideableGenre(genreList: movie.genres!),
+                      child: SlideableGenre(genreList: vm.movie!.genres!),
                     ),
                   ),
                   Padding(
@@ -119,27 +87,18 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     ),
                     child: BookmarkButton(
                       isBookmarked: isBookmarked,
-                      onTap: () {
-                        setState(() {
-                          isBookmarked = !isBookmarked;
-                          print(isBookmarked);
-                        });
-                      },
+                      onTap: vm.addOrRemoveBookmark,
                     ),
                   ),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: Paddings.lowlow.value),
-                    child: const Divider(),
-                  ),
+                  const Divider(),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: Paddings.medium.value,
                         vertical: Paddings.lowlow.value),
                     child: PopularityRow(
-                        popularity: movie.popularity,
-                        voteAverage: movie.voteAverage,
-                        voteCount: movie.voteCount),
+                        popularity: vm.movie!.popularity,
+                        voteAverage: vm.movie!.voteAverage,
+                        voteCount: vm.movie!.voteCount),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Paddings.low.value),
@@ -147,16 +106,12 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                   ),
                   PosterCardWrapper<SimpleCredit>(
                     title: StringConstants.cast,
-                    future: movieCredits,
+                    future: vm.movieCredits,
                   ),
                 ],
               ),
-            );
-          } else {
-            return const LoadingWidget();
-          }
-        },
-      ),
+            )
+          : const LoadingWidget(),
     );
   }
 }
