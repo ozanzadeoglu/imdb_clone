@@ -21,11 +21,11 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
     if (item is BookmarkedMovie) {
       return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
     }
-    // else if (item is BookmarkedTvSeries){
-    //   return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
-    // }
+    else if (item is BookmarkedTvSeries){
+      return _BookmarkCard.fromBookmarkedTvSeries(onTap: onTap, item: item);
+    }
     else {
-      return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
+      return _BookmarkCard.fromBookmarkedPeople(onTap: onTap, item: item);
     }
   }
 
@@ -36,21 +36,20 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
         tvSeries = null,
         people = null;
 
-  //   PosterCard.fromCredit({super.key, required SimpleCredit simpleCredit})
-  //     : id = simpleCredit.id,
-  //       info = simpleCredit.characterName,
-  //       imagePath = simpleCredit.profilePath,
-  //       title = simpleCredit.actorName,
-  //       mediaType = MediaTypes.person.value,
-  //       rating = null;
+  _BookmarkCard.fromBookmarkedTvSeries(
+      {super.key, required this.onTap, required BookmarkedTvSeries item})
+      : imagePath = item.tvSeries.posterPath,
+        movie = null,
+        tvSeries = item.tvSeries,
+        people = null;
 
-  // PosterCard.fromPosterCardMedia({super.key, required PosterCardMedia media})
-  //     : id = media.id,
-  //       info = media.mediaType,
-  //       imagePath = media.posterPath,
-  //       title = media.title,
-  //       mediaType = media.mediaType,
-  //       rating = media.voteAverage;
+  _BookmarkCard.fromBookmarkedPeople(
+      {super.key, required this.onTap, required BookmarkedPeople item})
+      : imagePath = item.person.imagePath,
+        movie = null,
+        tvSeries = null,
+        people = item.person;
+
 
   @override
   Widget build(BuildContext context) {
