@@ -12,11 +12,10 @@ class _ImageAndInfoRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BookmarkPoster(
-          path: people.imagePath,
+        SizedBox(
           height: ImageSizes.detailsHeight.value,
           width: ImageSizes.detailsWidth.value,
-          isBookmarked: null,
+          child: CustomPosterNetworkImage(path: people.imagePath),
         ),
         SizedBox(width: context.sized.lowValue),
         Expanded(
@@ -29,25 +28,25 @@ class _ImageAndInfoRow extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               _SingleInfoRow(
-                  field: StringConstants.peopleDetailsKnownFor,
-                  value: people.knownForDepartment,
-                  ),
+                field: StringConstants.peopleDetailsKnownFor,
+                value: people.knownForDepartment,
+              ),
               _SingleInfoRow(
-                  field: StringConstants.peopleDetailsGender,
-                  value: people.gender,
-                  ),
+                field: StringConstants.peopleDetailsGender,
+                value: people.gender,
+              ),
               _SingleInfoRow(
-                  field: StringConstants.peopleDetailsBirthday,
-                  value: people.birthday,
-                  ),
+                field: StringConstants.peopleDetailsBirthday,
+                value: people.birthday,
+              ),
               _SingleInfoRow(
-                  field: StringConstants.peopleDetailsDeathday,
-                  value: people.deathDay,
-                  ),
+                field: StringConstants.peopleDetailsDeathday,
+                value: people.deathDay,
+              ),
               _SingleInfoRow(
-                  field: StringConstants.peopleDetailsPlaceOfBirth,
-                  value: people.placeOfBirth,
-                  ),
+                field: StringConstants.peopleDetailsPlaceOfBirth,
+                value: people.placeOfBirth,
+              ),
             ],
           ),
         ),
