@@ -17,6 +17,7 @@ import 'package:imdb_app/models/tv_series.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
 import 'package:imdb_app/views/movie/movie_details_controller.dart';
+import 'package:imdb_app/views/people/people_details_controller.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
@@ -117,8 +118,13 @@ class MyApp extends StatelessWidget {
             builder: (context, state) {
               final peopleID = int.parse(state.pathParameters['id']!);
               final peopleName = state.uri.queryParameters['name'];
-              return PeopleDetailsView(
-                  peopleID: peopleID, peopleName: peopleName!);
+              return ChangeNotifierProvider(
+                    create: (_) => PeopleDetailsController(
+                      peopleID: peopleID,
+                      peopleName: peopleName ?? "",
+                    ),
+                    child: const PeopleDetailsView(),
+                  );
             },
           ),
           GoRoute(
