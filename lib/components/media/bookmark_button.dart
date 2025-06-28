@@ -14,7 +14,7 @@ class BookmarkButton extends StatelessWidget {
       child: SizedBox(
         height: 50,
         width: double.infinity,
-        child: isBookmarked ? const BookmarkButtonAdd() : const BookmarkButtonRemove(),
+        child: isBookmarked ? const BookmarkButtonRemove() : const BookmarkButtonAdd(),
       ),
     );
   }
