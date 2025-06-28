@@ -19,6 +19,7 @@ import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
 import 'package:imdb_app/views/movie/movie_details_controller.dart';
 import 'package:imdb_app/views/people/people_details_controller.dart';
 import 'package:imdb_app/views/search/search_view_controller.dart';
+import 'package:imdb_app/views/tv_series/details/tv_series_details_controller.dart';
 import 'package:imdb_app/views/tv_series/seasons/tv_series_seasons_controller.dart';
 import 'package:imdb_app/enums/paddings.dart';
 import 'package:imdb_app/models/search/simple_list_tile_media.dart';
@@ -133,10 +134,13 @@ class MyApp extends StatelessWidget {
             builder: (context, state) {
               final tvSeriesID = int.parse(state.pathParameters['id']!);
               final tvSeriesName = state.uri.queryParameters['name'];
-              return TvSeriesDetailsView(
-                tvSeriesID: tvSeriesID,
-                tvSeriesName: tvSeriesName!,
-              );
+              return ChangeNotifierProvider(
+                    create: (_) => TvSeriesDetailsController(
+                      tvSeriesID: tvSeriesID,
+                      tvSeriesName: tvSeriesName ?? "",
+                    ),
+                    child: const TvSeriesDetailsView(),
+                  );
             },
             routes: [
               GoRoute(
