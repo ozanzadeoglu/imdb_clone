@@ -28,4 +28,7 @@ class StringConstants {
   static const bookmark = "Bookmarks";
   static const addToBookmarks = "Add to bookmarks";
   static const removeFromBookmarks = "Remove from bookmarks";
+  static const yes = "Yes";
+  static const bookmarkConfirmDialogMessage =
+        "Are you sure you want to remove title from watchlist?";
 }
