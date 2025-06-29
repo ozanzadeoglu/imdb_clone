@@ -2,7 +2,8 @@ part of "../bookmark_view.dart";
 
 class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
   final String? imagePath;
-  final VoidCallback? onTap;
+  final VoidCallback? onBookmarkIconTap;
+  final VoidCallback? onCardTap;
 
   final Movie? movie;
   final TVSeries? tvSeries;
@@ -11,50 +12,70 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
   const _BookmarkCard({
     super.key,
     required this.imagePath,
-    required this.onTap,
+    required this.onBookmarkIconTap,
+    required this.onCardTap,
     this.movie,
     this.tvSeries,
     this.people,
   });
 
-  factory _BookmarkCard.fromType({required item, required onTap}) {
+  factory _BookmarkCard.fromType(
+      {required item, required onBookmarkIconTap, required onCardTap}) {
     if (item is BookmarkedMovie) {
-      return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
-    }
-    else if (item is BookmarkedTvSeries){
-      return _BookmarkCard.fromBookmarkedTvSeries(onTap: onTap, item: item);
-    }
-    else {
-      return _BookmarkCard.fromBookmarkedPeople(onTap: onTap, item: item);
+      return _BookmarkCard.fromBookmarkedMovie(
+        onBookmarkIconTap: onBookmarkIconTap,
+        onCardTap: onCardTap,
+        item: item,
+      );
+    } else if (item is BookmarkedTvSeries) {
+      return _BookmarkCard.fromBookmarkedTvSeries(
+        onBookmarkIconTap: onBookmarkIconTap,
+        onCardTap: onCardTap,
+        item: item,
+      );
+    } else {
+      return _BookmarkCard.fromBookmarkedPeople(
+        onBookmarkIconTap: onBookmarkIconTap,
+        onCardTap: onCardTap,
+        item: item,
+      );
     }
   }
 
   _BookmarkCard.fromBookmarkedMovie(
-      {super.key, required this.onTap, required BookmarkedMovie item})
+      {super.key,
+      required this.onBookmarkIconTap,
+      required this.onCardTap,
+      required BookmarkedMovie item})
       : imagePath = item.movie.posterPath,
         movie = item.movie,
         tvSeries = null,
         people = null;
 
   _BookmarkCard.fromBookmarkedTvSeries(
-      {super.key, required this.onTap, required BookmarkedTvSeries item})
+      {super.key,
+      required this.onBookmarkIconTap,
+      required this.onCardTap,
+      required BookmarkedTvSeries item})
       : imagePath = item.tvSeries.posterPath,
         movie = null,
         tvSeries = item.tvSeries,
         people = null;
 
   _BookmarkCard.fromBookmarkedPeople(
-      {super.key, required this.onTap, required BookmarkedPeople item})
+      {super.key,
+      required this.onBookmarkIconTap,
+      required this.onCardTap,
+      required BookmarkedPeople item})
       : imagePath = item.person.imagePath,
         movie = null,
         tvSeries = null,
         people = item.person;
 
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: onCardTap,
       child: Container(
         decoration: const BoxDecoration(
             border:
@@ -65,9 +86,8 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
           child: Row(
             children: [
               AspectRatio(
-                aspectRatio: 1 / 1.5,
-                child: CustomPosterNetworkImage(path: imagePath),
-              ),
+                  aspectRatio: 1 / 1.5,
+                  child: _BookmarkPoster(imagePath: imagePath, onTap: onBookmarkIconTap)),
               Flexible(
                 child: Padding(
                   padding: EdgeInsets.only(left: Paddings.low.value),
@@ -104,6 +124,7 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
                   : const SizedBox.shrink(),
             ],
           ),
+          PosterCardRating(rating: movie!.voteAverage),
         ],
       );
     } else if (tvSeries != null) {
@@ -123,11 +144,14 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
           Row(
             children: [
               const Text(StringConstants.tvSeries),
-              tvSeries!.firstAirDate != null && tvSeries!.firstAirDate!.isNotEmpty
-                  ? Text(", ${tvSeries!.firstAirDate!.extractYear()}")
+              tvSeries!.firstAirDate != null &&
+                      tvSeries!.firstAirDate!.isNotEmpty
+                  ? Text(", ${tvSeries!.firstAirDate!.extractYear()} ")
                   : const SizedBox.shrink(),
+              Text("${tvSeries!.numberOfEpisodes.toString()}eps")
             ],
           ),
+          PosterCardRating(rating: tvSeries!.voteAverage),
         ],
       );
     } else if (people != null) {
@@ -155,92 +179,8 @@ class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
         ],
       );
     }
-    return const Column();
+    return const Column(mainAxisSize: MainAxisSize.min);
   }
-
-// class _BookmarkCard<T extends BookmarkEntity> extends StatelessWidget {
-//   final String? imagePath;
-//   final String? title;
-//   final String? info;
-//   final int? id;
-//   final MediaTypes mediaType;
-//   final double? rating;
-//   final VoidCallback? onTap;
-
-//   const _BookmarkCard({
-//     super.key,
-//     required this.imagePath,
-//     required this.title,
-//     required this.info,
-//     required this.id,
-//     required this.mediaType,
-//     this.rating,
-//     required this.onTap,
-//   });
-
-//   factory _BookmarkCard.fromType({required item, required onTap}) {
-//     if (item is BookmarkedMovie) {
-//       return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
-//     }
-//     // else if (item is BookmarkedTvSeries){
-//     //   return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
-//     // }
-//     else {
-//       return _BookmarkCard.fromBookmarkedMovie(onTap: onTap, item: item);
-//     }
-//   }
-
-//    _BookmarkCard.fromBookmarkedMovie(
-//       {super.key, required this.onTap, required BookmarkedMovie item})
-//       : id = item.movie.id,
-//         imagePath = item.movie.posterPath,
-//         info = item.movie.overview,
-//         mediaType = MediaTypes.movie,
-//         rating = item.movie.voteAverage,
-//         title = item.movie.title;
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return GestureDetector(
-  //     onTap: () => NavigationUtils().launchDependingOnMediaType(
-  //       context: context,
-  //       mediaType: mediaType,
-  //       mediaID: id,
-  //       mediaTitle: title,
-  //     ),
-  //     child: SizedBox(
-  //       width: 140,
-  //       child: Container(
-  //         decoration: wrapperContainerDecoration(context),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           crossAxisAlignment: CrossAxisAlignment.stretch,
-  //           children: [
-  //             _BookmarkPoster(
-  //               imagePath: imagePath,
-  //               onTap: onTap,
-  //             ),
-  //             Padding(
-  //               padding: EdgeInsets.all(Paddings.low.value),
-  //               child: _PosterCardInfoColumn(
-  //                 title: title,
-  //                 info: info,
-  //                 rating: rating,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // BoxDecoration wrapperContainerDecoration(BuildContext context) {
-  //   return BoxDecoration(
-  //     color: ColorConstants.offBlack,
-  //     borderRadius: BorderRadius.circular(context.sized.normalValue),
-  //   );
-  // }
 }
 
 class _BookmarkPoster extends StatelessWidget {
@@ -280,7 +220,7 @@ class _BookmarkIcon extends StatelessWidget {
         Container(
           margin: EdgeInsets.zero,
           padding: EdgeInsets.zero,
-          width: 52,
+          width: 40,
           child: Opacity(
             opacity: 1,
             child: Image.asset(
@@ -291,79 +231,11 @@ class _BookmarkIcon extends StatelessWidget {
           ),
         ),
         const Positioned(
-            right: 15,
-            bottom: 25,
+            right: 8,
+            bottom: 16,
             child: Icon(Icons.check, color: Colors.black)),
       ],
     );
-  }
-}
-
-class _PosterCardInfoColumn extends StatelessWidget {
-  final String? title;
-  final String? info;
-  final double? rating;
-
-  const _PosterCardInfoColumn({
-    required this.title,
-    required this.info,
-    required this.rating,
-  });
-
-  //info will stay as it is if it's created
-  //with a people detail but if it's a part
-  //of mediaType, the info will be change from
-  //"tv" to "Tv-Series" and "movie" to "Movie"
-  String? changeInfoIfNeeded(String? info) {
-    if (info == MediaTypes.movie.value) {
-      return StringConstants.movie;
-    } else if (info == MediaTypes.tv.value) {
-      return StringConstants.tvSeries;
-    } else if (info == MediaTypes.person.value) {
-      return StringConstants.people;
-    } else {
-      return info;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final double posterCardTitleBoxHeight = 48;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        PosterCardRating(rating: rating), //24
-        SizedBox(height: Paddings.lowlow.value),
-        SizedBox(
-            height: posterCardTitleBoxHeight,
-            child: PosterCardTitleBox(title: title)),
-        const SizedBox(height: 12),
-        Text(changeInfoIfNeeded(info) ?? " ",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodyMedium),
-      ],
-    );
-  }
-}
-
-//poster card's title will be created here.
-//text wrapped by fixed height sizedbox so ui
-//will not depend on title length. e.g 1 line, 2 lines
-class PosterCardTitleBox extends StatelessWidget {
-  final String? title;
-  const PosterCardTitleBox({super.key, required this.title});
-  @override
-  Widget build(BuildContext context) {
-    return Text(title ?? "",
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context)
-            .textTheme
-            .bodyLarge!
-            .copyWith(color: Colors.white));
   }
 }
 
