@@ -25,5 +25,7 @@ class StringConstants {
   static const recentSearches = "Recent Searches";
   static const cancel = "Cancel";
   static const clear = "Clear";
-  static const bookmark = "Bookmark";
+  static const bookmark = "Bookmarks";
+  static const addToBookmarks = "Add to bookmarks";
+  static const removeFromBookmarks = "Remove from bookmarks";
 }
