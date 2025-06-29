@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imdb_app/constants/color_constants.dart';
+import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/enums/paddings.dart';
 
 class BookmarkButton extends StatelessWidget {
@@ -49,7 +50,7 @@ class BookmarkButtonRemove extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              "Added to bookmark",
+              StringConstants.removeFromBookmarks,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -84,7 +85,7 @@ class BookmarkButtonAdd extends StatelessWidget {
             const Icon(Icons.add, size: 36, color: Colors.black),
             const SizedBox(width: 4),
             Text(
-              "Add to bookmark",
+              StringConstants.addToBookmarks,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: Colors.black,
                     fontSize: 20,
