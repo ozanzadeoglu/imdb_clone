@@ -18,4 +18,7 @@ class BookmarkedPeople extends BookmarkEntity {
           id: "${MediaTypes.person.value}_${person.id}",
           mediaType: MediaTypes.person,
         );
+
+  @override
+  String get title => person.name ?? "";
 }

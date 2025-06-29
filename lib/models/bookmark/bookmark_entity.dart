@@ -18,6 +18,7 @@ abstract class BookmarkEntity extends HiveObject {
     required this.mediaType,
   });
 
+  ///Extracts the integer ID of the underlying media from this bookmark’s composite ID.
   int? get originalMediaId {
     final parts = id.split('_');
     if (parts.length == 2) {
@@ -25,4 +26,7 @@ abstract class BookmarkEntity extends HiveObject {
     }
     return null;
   }
+
+  ///Convenience getter so every subclass can expose its own title.
+  String get title;
 }

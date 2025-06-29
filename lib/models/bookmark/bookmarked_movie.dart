@@ -19,4 +19,6 @@ class BookmarkedMovie extends BookmarkEntity {
           id: "${MediaTypes.movie.value}_${movie.id}",
           mediaType: MediaTypes.movie,
         );
+  @override
+  String get title => movie.title ?? "";
 }
