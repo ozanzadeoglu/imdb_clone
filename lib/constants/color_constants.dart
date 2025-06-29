@@ -15,4 +15,5 @@ class ColorConstants {
   static const iconRed = Color(0xffFF0000);
   static const iconBlue = Color(0xff0047AB);
   static const iconYellow = Color(0xffFFC300);
+  static const vermillonCinnabar = Color(0xffe14447);//pale red used in remove button of bookmark alert dialog.
 }
