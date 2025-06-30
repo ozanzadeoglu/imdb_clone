@@ -10,14 +10,28 @@ class BookmarkViewController with ChangeNotifier {
   late final BookmarkService bookmarkService;
   late final Box<BookmarkEntity> bookmarkBox;
 
+  late final ValueListenable<Box<BookmarkEntity>> _boxListenable; 
+  late final VoidCallback _boxListener;
+
   List<BookmarkEntity> bookmarks = [];
 
   BookmarkViewController() {
     bookmarkService = BookmarkService();
     bookmarkBox = bookmarkService.box;
     fetchBookmarks();
-    bookmarkBox.listenable().addListener(fetchBookmarks);
+    _boxListener = fetchBookmarks;
+    _boxListenable = bookmarkBox.listenable();
+    _boxListenable.addListener(_boxListener);
+
+    // bookmarkBox.listenable().addListener(fetchBookmarks);
   }
+
+  @override
+  void dispose() {
+    _boxListenable.removeListener(_boxListener);
+    super.dispose();
+  }
+
   //Box<BookmarkEntity>? get box => bookmarkService.box;
   final testBookmarkedMovie = BookmarkedMovie(
       bookmarkedDate: DateTime.now(),
@@ -44,6 +58,7 @@ class BookmarkViewController with ChangeNotifier {
 
   void fetchBookmarks() {
     bookmarks = bookmarkService.fetchValues() ?? [];
+    bookmarks.sort((a, b) => b.bookmarkedDate.compareTo(a.bookmarkedDate));
     notifyListeners();
   }
 
