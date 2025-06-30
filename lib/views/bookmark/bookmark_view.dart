@@ -16,6 +16,7 @@ import 'package:imdb_app/models/people.dart';
 import 'package:imdb_app/models/tv_series.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
+import 'package:provider/provider.dart';
 
 part "widgets/_bookmark_poster.dart";
 
@@ -27,10 +28,49 @@ class BookmarkView extends StatefulWidget {
 }
 
 class _BookmarkViewState extends State<BookmarkView> {
-  final vm = BookmarkViewController();
   final nav = NavigationUtils();
 
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.read<BookmarkViewController>();
+    final bookmarks =
+        context.select<BookmarkViewController, List<BookmarkEntity>>(
+            (vm) => vm.bookmarks);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(StringConstants.bookmark),
+        actions: [
+          TextButton(onPressed: vm.addTestBookmark, child: Text("add")),
+          TextButton(onPressed: vm.removeTestBookmark, child: Text("remove")),
+          TextButton(onPressed: vm.clearBookmarks, child: Text("clear"))
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: bookmarks.length,
+        itemBuilder: (context, index) {
+          final item = bookmarks[index];
+          return Center(
+            child: SizedBox(
+              height: 160,
+              child: _BookmarkCard.fromType(
+                item: item,
+                onBookmarkIconTap: () => showRemoveBookmarkDialog(item),
+                onCardTap: () => nav.launchDependingOnMediaType(
+                  context: context,
+                  mediaType: item.mediaType.value,
+                  mediaID: item.originalMediaId,
+                  mediaTitle: item.title,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   void showRemoveBookmarkDialog(BookmarkEntity item) async {
+    final vm = context.read<BookmarkViewController>();
     final shouldRemove = await showDialog(
       context: context,
       builder: (context) => const ConfirmDialog(
@@ -42,46 +82,5 @@ class _BookmarkViewState extends State<BookmarkView> {
     if (shouldRemove == true) {
       vm.removeBookmark(item);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(StringConstants.bookmark),
-        actions: [
-          TextButton(onPressed: vm.addTestBookmark, child: Text("add")),
-          TextButton(onPressed: vm.removeTestBookmark, child: Text("remove")),
-          TextButton(onPressed: vm.clearBookmarks, child: Text("clear"))
-        ],
-      ),
-      body: ValueListenableBuilder<Box<BookmarkEntity>>(
-        valueListenable: vm.bookmarkBox.listenable(),
-        builder: (context, box, child) {
-          var bookmarks = vm.fetchBookmarks();
-          return ListView.builder(
-            itemCount: bookmarks?.length ?? 0,
-            itemBuilder: (context, index) {
-              final item = bookmarks![index];
-              return Center(
-                child: SizedBox(
-                  height: 160,
-                  child: _BookmarkCard.fromType(
-                    item: item,
-                    onBookmarkIconTap: () => showRemoveBookmarkDialog(item),
-                    onCardTap: () => nav.launchDependingOnMediaType(
-                      context: context,
-                      mediaType: item.mediaType.value,
-                      mediaID: item.originalMediaId,
-                      mediaTitle: item.title,
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
   }
 }

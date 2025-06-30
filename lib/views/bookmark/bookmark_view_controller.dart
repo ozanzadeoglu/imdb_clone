@@ -10,9 +10,13 @@ class BookmarkViewController with ChangeNotifier {
   late final BookmarkService bookmarkService;
   late final Box<BookmarkEntity> bookmarkBox;
 
+  List<BookmarkEntity> bookmarks = [];
+
   BookmarkViewController() {
     bookmarkService = BookmarkService();
     bookmarkBox = bookmarkService.box;
+    fetchBookmarks();
+    bookmarkBox.listenable().addListener(fetchBookmarks);
   }
   //Box<BookmarkEntity>? get box => bookmarkService.box;
   final testBookmarkedMovie = BookmarkedMovie(
@@ -38,8 +42,9 @@ class BookmarkViewController with ChangeNotifier {
     bookmarkService.removeItem(testBookmarkedMovie.id);
   }
 
-  List<BookmarkEntity>? fetchBookmarks() {
-    return bookmarkService.fetchValues();
+  void fetchBookmarks() {
+    bookmarks = bookmarkService.fetchValues() ?? [];
+    notifyListeners();
   }
 
   void clearBookmarks() {
