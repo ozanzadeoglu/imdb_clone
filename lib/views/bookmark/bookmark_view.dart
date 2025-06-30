@@ -19,6 +19,8 @@ import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
 import 'package:provider/provider.dart';
 
 part "widgets/_bookmark_poster.dart";
+part "widgets/_filter_button.dart";
+
 
 class BookmarkView extends StatefulWidget {
   const BookmarkView({super.key});
@@ -29,21 +31,16 @@ class BookmarkView extends StatefulWidget {
 
 class _BookmarkViewState extends State<BookmarkView> {
   final nav = NavigationUtils();
-
+  
   @override
   Widget build(BuildContext context) {
-    final vm = context.read<BookmarkViewController>();
     final bookmarks =
         context.select<BookmarkViewController, List<BookmarkEntity>>(
             (vm) => vm.bookmarks);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(StringConstants.bookmark),
-        actions: [
-          TextButton(onPressed: vm.addTestBookmark, child: Text("add")),
-          TextButton(onPressed: vm.removeTestBookmark, child: Text("remove")),
-          TextButton(onPressed: vm.clearBookmarks, child: Text("clear"))
-        ],
+        centerTitle: false,
+        title: Text(StringConstants.bookmark, style: Theme.of(context).textTheme.headlineMedium),
       ),
       body: ListView.builder(
         itemCount: bookmarks.length,

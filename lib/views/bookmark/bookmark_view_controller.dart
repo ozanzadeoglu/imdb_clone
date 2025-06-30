@@ -48,14 +48,6 @@ class BookmarkViewController with ChangeNotifier {
     bookmarkService.removeItem(item.id);
   }
 
-  void addTestBookmark() {
-    bookmarkService.putItem(testBookmarkedMovie.id, testBookmarkedMovie);
-  }
-
-  void removeTestBookmark() {
-    bookmarkService.removeItem(testBookmarkedMovie.id);
-  }
-
   void fetchBookmarks() {
     bookmarks = bookmarkService.fetchValues() ?? [];
     bookmarks.sort((a, b) => b.bookmarkedDate.compareTo(a.bookmarkedDate));
