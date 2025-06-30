@@ -2,7 +2,7 @@ class StringConstants {
   static const noOverview = "Currently there is no overview. Contact us.";
   static const unknownName = "Unkown";
   static const trendingWeek = "Trending This Week";
-  static const trendingToday ="Trending Today";
+  static const trendingToday = "Trending Today";
   static const popularPeople = "Popular People";
   static const cast = "Cast";
   static const movie = "Movie";
@@ -30,5 +30,5 @@ class StringConstants {
   static const removeFromBookmarks = "Remove from bookmarks";
   static const yes = "Yes";
   static const bookmarkConfirmDialogMessage =
-        "Are you sure you want to remove title from watchlist?";
+      "Are you sure you want to remove media from bookmarks?";
 }
