@@ -21,7 +21,6 @@ import 'package:provider/provider.dart';
 part "widgets/_bookmark_poster.dart";
 part "widgets/_filter_button.dart";
 
-
 class BookmarkView extends StatefulWidget {
   const BookmarkView({super.key});
 
@@ -31,16 +30,40 @@ class BookmarkView extends StatefulWidget {
 
 class _BookmarkViewState extends State<BookmarkView> {
   final nav = NavigationUtils();
-  
+
   @override
   Widget build(BuildContext context) {
+    final vm = context.read<BookmarkViewController>();
     final bookmarks =
         context.select<BookmarkViewController, List<BookmarkEntity>>(
-            (vm) => vm.bookmarks);
+            (vm) => vm.displayBookmarks);
+    final MediaTypes? selectedType = context
+        .select<BookmarkViewController, MediaTypes?>((vm) => vm.typeFilter);
+
+    final DateSortOrder? dateFilter = context
+        .select<BookmarkViewController, DateSortOrder?>((vm) => vm.dateFilter);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text(StringConstants.bookmark, style: Theme.of(context).textTheme.headlineMedium),
+        title: Text(StringConstants.bookmark,
+            style: Theme.of(context).textTheme.headlineMedium),
+        actions: [
+          _FilterButton(
+            buttonTitles: MediaTypes.values,
+            onPressed: vm.addTypeFilter,
+            onUnselect: vm.clearTypeFilter,
+            selectedType: selectedType,
+            unselectedLabel: "Type",
+          ),
+          _FilterButton(
+            buttonTitles: DateSortOrder.values,
+            onPressed: vm.addDateFilter,
+            onUnselect: vm.clearDateFilter,
+            selectedType: dateFilter,
+            unselectedLabel: "Date Added",
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: bookmarks.length,
