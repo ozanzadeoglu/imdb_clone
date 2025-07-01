@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:imdb_app/enums/media_types.dart';
 import 'package:imdb_app/models/bookmark/bookmark_entity.dart';
-import 'package:imdb_app/models/bookmark/bookmarked_movie.dart';
-import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/services/bookmark/bookmark_service.dart';
 
 enum DateSortOrder { descending, ascending }
@@ -16,7 +14,6 @@ class BookmarkViewController with ChangeNotifier {
   late final VoidCallback _boxListener;
 
   List<BookmarkEntity> _bookmarks = [];
-  List<BookmarkEntity> filteredBookmarks = [];
 
   MediaTypes? typeFilter;
   DateSortOrder? dateFilter;
@@ -36,6 +33,11 @@ class BookmarkViewController with ChangeNotifier {
     super.dispose();
   }
 
+  int get totalBookmarksLength{
+    return _bookmarks.length;
+  }
+
+
   List<BookmarkEntity> get displayBookmarks {
     var list = List<BookmarkEntity>.from(_bookmarks);
     if (typeFilter != null) {
@@ -48,7 +50,6 @@ class BookmarkViewController with ChangeNotifier {
       list.sort((a, b) => b.bookmarkedDate.compareTo(a.bookmarkedDate));
     }
 
-    //list.sort((a, b) => b.bookmarkedDate.compareTo(a.bookmarkedDate));
     return list;
   }
 
