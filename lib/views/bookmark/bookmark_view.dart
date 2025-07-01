@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:imdb_app/components/common/confirm_dialog.dart';
 import 'package:imdb_app/constants/string_constants.dart';
 import 'package:imdb_app/components/common/custom_poster_network_image.dart';
@@ -18,7 +17,7 @@ import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
 import 'package:provider/provider.dart';
 
-part "widgets/_bookmark_poster.dart";
+part "widgets/_bookmark_card.dart";
 part "widgets/_filter_button.dart";
 
 class BookmarkView extends StatefulWidget {
@@ -30,6 +29,7 @@ class BookmarkView extends StatefulWidget {
 
 class _BookmarkViewState extends State<BookmarkView> {
   final nav = NavigationUtils();
+  final double cardHeight = 160;
 
   @override
   Widget build(BuildContext context) {
@@ -48,45 +48,84 @@ class _BookmarkViewState extends State<BookmarkView> {
         centerTitle: false,
         title: Text(StringConstants.bookmark,
             style: Theme.of(context).textTheme.headlineMedium),
-        actions: [
-          _FilterButton(
-            buttonTitles: MediaTypes.values,
-            onPressed: vm.addTypeFilter,
-            onUnselect: vm.clearTypeFilter,
-            selectedType: selectedType,
-            unselectedLabel: "Type",
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(Paddings.medium.value),
+            child: Row(
+              spacing: Paddings.medium.value,
+              children: [
+                _FilterButton(
+                  buttonTitles: MediaTypes.values,
+                  onPressed: vm.addTypeFilter,
+                  onUnselect: vm.clearTypeFilter,
+                  selectedFilter: selectedType,
+                  unselectedLabel: StringConstants.type,
+                ),
+                _FilterButton(
+                  buttonTitles: DateSortOrder.values,
+                  onPressed: vm.addDateFilter,
+                  onUnselect: vm.clearDateFilter,
+                  selectedFilter: dateFilter,
+                  unselectedLabel: StringConstants.dateAdded,
+                ),
+              ],
+            ),
           ),
-          _FilterButton(
-            buttonTitles: DateSortOrder.values,
-            onPressed: vm.addDateFilter,
-            onUnselect: vm.clearDateFilter,
-            selectedType: dateFilter,
-            unselectedLabel: "Date Added",
+
+          const Divider(height: 2),
+
+          Padding(
+            padding: EdgeInsets.all(Paddings.medium.value),
+            child: resultsTextWidget(
+              bookmarks.length,
+              vm.totalBookmarksLength,
+              (dateFilter != null || selectedType != null),
+            ),
+          ),
+
+          const Divider(height: 2),
+
+          SizedBox(height: Paddings.low.value),
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: bookmarks.length,
+              itemBuilder: (context, index) {
+                final item = bookmarks[index];
+                return Center(
+                  child: SizedBox(
+                    height: cardHeight,
+                    child: _BookmarkCard.fromType(
+                      item: item,
+                      onBookmarkIconTap: () => showRemoveBookmarkDialog(item),
+                      onCardTap: () => nav.launchDependingOnMediaType(
+                        context: context,
+                        mediaType: item.mediaType.value,
+                        mediaID: item.originalMediaId,
+                        mediaTitle: item.title,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: bookmarks.length,
-        itemBuilder: (context, index) {
-          final item = bookmarks[index];
-          return Center(
-            child: SizedBox(
-              height: 160,
-              child: _BookmarkCard.fromType(
-                item: item,
-                onBookmarkIconTap: () => showRemoveBookmarkDialog(item),
-                onCardTap: () => nav.launchDependingOnMediaType(
-                  context: context,
-                  mediaType: item.mediaType.value,
-                  mediaID: item.originalMediaId,
-                  mediaTitle: item.title,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
     );
+  }
+
+  Text resultsTextWidget(
+      int filteredBookmarkLength, int totalBookmarkLength, bool isFiltered) {
+    final result = filteredBookmarkLength == 1 ? StringConstants.result : StringConstants.results;
+    final fullText = isFiltered
+        ? "$filteredBookmarkLength (${StringConstants.of} $totalBookmarkLength) $result"
+        : "$totalBookmarkLength $result";
+
+    return Text(fullText, style: Theme.of(context).textTheme.bodyLarge);
   }
 
   void showRemoveBookmarkDialog(BookmarkEntity item) async {
