@@ -31,4 +31,9 @@ class StringConstants {
   static const yes = "Yes";
   static const bookmarkConfirmDialogMessage =
       "Are you sure you want to remove media from bookmarks?";
+  static const result = "Result";
+  static const results = "Results";
+  static const type = "Type";
+  static const dateAdded = "Date added";
+  static const of = "of"; 
 }
