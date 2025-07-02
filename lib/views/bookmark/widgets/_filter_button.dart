@@ -67,32 +67,35 @@ class _FilterButton<T extends Enum> extends StatelessWidget {
                         width: double.maxFinite,
                         child: Center(child: Text(unselectedLabel)),
                       ),
-                      ListView.builder(
-                        itemCount: buttonTitles.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  onPressed(buttonTitles[index]);
-                                },
-                                child: SizedBox(
-                                  height: filterBarSize,
-                                  width: double.maxFinite,
-                                  child: FilterBar<T>(
-                                    title: buttonTitles[index],
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: ListView.builder(
+                          itemCount: buttonTitles.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    onPressed(buttonTitles[index]);
+                                  },
+                                  child: SizedBox(
+                                    height: filterBarSize,
+                                    width: double.maxFinite,
+                                    child: FilterBar<T>(
+                                      title: buttonTitles[index],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Divider(height: 2),
-                            ],
-                          );
-                        },
+                                const Divider(height: 2),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ],
                   );
