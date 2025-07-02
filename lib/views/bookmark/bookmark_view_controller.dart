@@ -18,6 +18,8 @@ class BookmarkViewController with ChangeNotifier {
   MediaTypes? typeFilter;
   DateSortOrder? dateFilter;
 
+  bool reload = false;
+
   BookmarkViewController() {
     bookmarkService = BookmarkService();
     bookmarkBox = bookmarkService.box;
@@ -80,6 +82,13 @@ class BookmarkViewController with ChangeNotifier {
   void fetchBookmarks() {
     _bookmarks = bookmarkService.fetchValues() ?? [];
     _bookmarks.sort((a, b) => b.bookmarkedDate.compareTo(a.bookmarkedDate));
+    notifyListeners();
+  }
+
+  void updateBookmarkNote(BookmarkEntity item, String? newNote){
+    item.note = newNote;
+    item.save();
+    reload = !reload;
     notifyListeners();
   }
 

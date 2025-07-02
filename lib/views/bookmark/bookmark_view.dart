@@ -43,6 +43,13 @@ class _BookmarkViewState extends State<BookmarkView> {
     final DateSortOrder? dateFilter = context
         .select<BookmarkViewController, DateSortOrder?>((vm) => vm.dateFilter);
 
+    //it's purely to rebuild view when a note is added to a [BookmarkEntity],
+    //I'm not really satisfied with this workaround, should look into it later.  
+    // ignore: unused_local_variable
+    final bool reload = context
+        .select<BookmarkViewController, bool>((vm) => vm.reload);
+
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -55,6 +62,7 @@ class _BookmarkViewState extends State<BookmarkView> {
           Padding(
             padding: EdgeInsets.all(Paddings.medium.value),
             child: Row(
+              mainAxisSize: MainAxisSize.max,
               spacing: Paddings.medium.value,
               children: [
                 _FilterButton(
@@ -74,9 +82,7 @@ class _BookmarkViewState extends State<BookmarkView> {
               ],
             ),
           ),
-
           const Divider(height: 2),
-
           Padding(
             padding: EdgeInsets.all(Paddings.medium.value),
             child: resultsTextWidget(
@@ -85,29 +91,24 @@ class _BookmarkViewState extends State<BookmarkView> {
               (dateFilter != null || selectedType != null),
             ),
           ),
-
           const Divider(height: 2),
-
           SizedBox(height: Paddings.low.value),
-
           Expanded(
             child: ListView.builder(
               itemCount: bookmarks.length,
               itemBuilder: (context, index) {
                 final item = bookmarks[index];
                 return Center(
-                  child: SizedBox(
-                    height: cardHeight,
-                    child: _BookmarkCard.fromType(
-                      item: item,
-                      onBookmarkIconTap: () => showRemoveBookmarkDialog(item),
-                      onCardTap: () => nav.launchDependingOnMediaType(
-                        context: context,
-                        mediaType: item.mediaType.value,
-                        mediaID: item.originalMediaId,
-                        mediaTitle: item.title,
-                      ),
+                  child: _BookmarkCard.fromType(
+                    item: item,
+                    onBookmarkIconTap: () => _showRemoveBookmarkDialog(item),
+                    onCardTap: () => nav.launchDependingOnMediaType(
+                      context: context,
+                      mediaType: item.mediaType.value,
+                      mediaID: item.originalMediaId,
+                      mediaTitle: item.title,
                     ),
+                    onAddNoteTap: () => _showNoteEditor(item),
                   ),
                 );
               },
@@ -120,7 +121,9 @@ class _BookmarkViewState extends State<BookmarkView> {
 
   Text resultsTextWidget(
       int filteredBookmarkLength, int totalBookmarkLength, bool isFiltered) {
-    final result = filteredBookmarkLength == 1 ? StringConstants.result : StringConstants.results;
+    final result = filteredBookmarkLength == 1
+        ? StringConstants.result
+        : StringConstants.results;
     final fullText = isFiltered
         ? "$filteredBookmarkLength (${StringConstants.of} $totalBookmarkLength) $result"
         : "$totalBookmarkLength $result";
@@ -128,7 +131,7 @@ class _BookmarkViewState extends State<BookmarkView> {
     return Text(fullText, style: Theme.of(context).textTheme.bodyLarge);
   }
 
-  void showRemoveBookmarkDialog(BookmarkEntity item) async {
+  void _showRemoveBookmarkDialog(BookmarkEntity item) async {
     final vm = context.read<BookmarkViewController>();
     final shouldRemove = await showDialog(
       context: context,
@@ -141,5 +144,20 @@ class _BookmarkViewState extends State<BookmarkView> {
     if (shouldRemove == true) {
       vm.removeBookmark(item);
     }
+  }
+    void _showNoteEditor(BookmarkEntity item) {
+    final vm = context.read<BookmarkViewController>();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return NoteEditorDialog(
+          initialNote: item.note,
+          onSave: (String newNote) {
+            vm.updateBookmarkNote(item, newNote);
+          },
+        );
+      },
+    );
   }
 }
