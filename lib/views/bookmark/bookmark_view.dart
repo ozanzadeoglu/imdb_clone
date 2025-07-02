@@ -19,6 +19,10 @@ import 'package:provider/provider.dart';
 
 part "widgets/_bookmark_card.dart";
 part "widgets/_filter_button.dart";
+part 'widgets/_note_editor_dialog.dart';
+part 'widgets/_bookmark_poster.dart';
+part 'widgets/_bookmark_card_details.dart';
+part 'widgets/_bookmark_actions_menu_button.dart';
 
 class BookmarkView extends StatefulWidget {
   const BookmarkView({super.key});
@@ -151,7 +155,7 @@ class _BookmarkViewState extends State<BookmarkView> {
     showDialog(
       context: context,
       builder: (context) {
-        return NoteEditorDialog(
+        return _NoteEditorDialog(
           initialNote: item.note,
           onSave: (String newNote) {
             vm.updateBookmarkNote(item, newNote);
