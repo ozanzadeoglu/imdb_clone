@@ -36,4 +36,10 @@ class StringConstants {
   static const type = "Type";
   static const dateAdded = "Date added";
   static const of = "of"; 
+  static const addNote = "Add note";
+  static const editNote = "Edit note";
+  static const save = "Save";
+  static const characters = "characters";
+  static const note = "Note";
+  static const remove = "Remove";
 }
