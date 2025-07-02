@@ -17,6 +17,7 @@ class BookmarkedTvSeries extends BookmarkEntity {
   }) : super(
           id: "${MediaTypes.tv.value}_${tvSeries.id}",
           mediaType: MediaTypes.tv,
+          note: null
         );
 
   @override

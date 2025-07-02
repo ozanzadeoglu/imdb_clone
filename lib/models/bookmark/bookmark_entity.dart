@@ -12,10 +12,14 @@ abstract class BookmarkEntity extends HiveObject {
   @HiveField(2)
   final MediaTypes mediaType;
 
+  @HiveField(4)
+  String? note;
+
   BookmarkEntity({
     required this.id,
     required this.bookmarkedDate,
     required this.mediaType,
+    this.note
   });
 
   ///Extracts the integer ID of the underlying media from this bookmark’s composite ID.

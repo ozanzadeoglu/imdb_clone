@@ -19,13 +19,13 @@ class BookmarkedPeopleAdapter extends TypeAdapter<BookmarkedPeople> {
     return BookmarkedPeople(
       bookmarkedDate: fields[1] as DateTime,
       person: fields[3] as People,
-    );
+    )..note = fields[4] as String?;
   }
 
   @override
   void write(BinaryWriter writer, BookmarkedPeople obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(3)
       ..write(obj.person)
       ..writeByte(0)
@@ -33,7 +33,9 @@ class BookmarkedPeopleAdapter extends TypeAdapter<BookmarkedPeople> {
       ..writeByte(1)
       ..write(obj.bookmarkedDate)
       ..writeByte(2)
-      ..write(obj.mediaType);
+      ..write(obj.mediaType)
+      ..writeByte(4)
+      ..write(obj.note);
   }
 
   @override

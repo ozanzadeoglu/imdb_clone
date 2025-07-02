@@ -19,13 +19,13 @@ class BookmarkedTvSeriesAdapter extends TypeAdapter<BookmarkedTvSeries> {
     return BookmarkedTvSeries(
       bookmarkedDate: fields[1] as DateTime,
       tvSeries: fields[3] as TVSeries,
-    );
+    )..note = fields[4] as String?;
   }
 
   @override
   void write(BinaryWriter writer, BookmarkedTvSeries obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(3)
       ..write(obj.tvSeries)
       ..writeByte(0)
@@ -33,7 +33,9 @@ class BookmarkedTvSeriesAdapter extends TypeAdapter<BookmarkedTvSeries> {
       ..writeByte(1)
       ..write(obj.bookmarkedDate)
       ..writeByte(2)
-      ..write(obj.mediaType);
+      ..write(obj.mediaType)
+      ..writeByte(4)
+      ..write(obj.note);
   }
 
   @override

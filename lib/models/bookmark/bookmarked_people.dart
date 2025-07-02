@@ -17,6 +17,7 @@ class BookmarkedPeople extends BookmarkEntity {
   }) : super(
           id: "${MediaTypes.person.value}_${person.id}",
           mediaType: MediaTypes.person,
+          note: null
         );
 
   @override
