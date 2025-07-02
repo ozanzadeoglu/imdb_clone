@@ -143,6 +143,7 @@ class _BookmarkViewState extends State<BookmarkView> {
         title: null,
         message: StringConstants.bookmarkConfirmDialogMessage,
         confirmColor: ColorConstants.vermillonCinnabar,
+        confirmLabel: StringConstants.remove,
       ),
     );
     if (shouldRemove == true) {
