@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,13 @@ import 'package:imdb_app/models/genre.dart';
 import 'package:imdb_app/models/movie.dart';
 import 'package:imdb_app/models/people.dart';
 import 'package:imdb_app/models/tv_series.dart';
+import 'package:imdb_app/services/bookmark/bookmark_service.dart';
+import 'package:imdb_app/services/dio_client.dart';
+import 'package:imdb_app/services/movie_service.dart';
+import 'package:imdb_app/services/people_service.dart';
+import 'package:imdb_app/services/search_service.dart';
+import 'package:imdb_app/services/trending_service.dart';
+import 'package:imdb_app/services/tv_series_service.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view.dart';
 import 'package:imdb_app/views/bookmark/bookmark_view_controller.dart';
 import 'package:imdb_app/views/movie/movie_details_controller.dart';
@@ -46,15 +54,40 @@ void main() async {
   Hive.registerAdapter(MovieAdapter());
   Hive.registerAdapter(TVSeriesAdapter());
   Hive.registerAdapter(PeopleAdapter());
-  
+
   //Bookmark adapters
   Hive.registerAdapter(BookmarkedMovieAdapter());
   Hive.registerAdapter(BookmarkedTvSeriesAdapter());
   Hive.registerAdapter(BookmarkedPeopleAdapter());
 
+  //Hive boxes
   await Hive.openBox<BookmarkEntity>(BoxNames.bookmarkBox);
   await Hive.openBox<SimpleListTileMediaHistory>(BoxNames.resentSearchBox);
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        //no dependencies
+        Provider<IBookmarkService>(create: (context) => BookmarkService(), dispose: (_, service) => service.dispose(),
+),
+
+        //low level dependencies
+        Provider<Dio>(create: (context) => DioClient.instance.dio),
+
+        //high level dependencies
+        ProxyProvider<Dio, IMovieService>(
+            update: (context, dio, previousService) => MovieService(dio)),
+        ProxyProvider<Dio, IPeopleService>(
+            update: (context, dio, previousService) => PeopleService(dio)),
+        ProxyProvider<Dio, ISearchService>(
+            update: (context, dio, previousService) => SearchService(dio)),
+        ProxyProvider<Dio, ITrendingService>(
+            update: (context, dio, previousService) => TrendingService(dio)),
+        ProxyProvider<Dio, ITvSeriesService>(
+            update: (context, dio, previousService) => TvSeriesService(dio)),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -84,7 +117,9 @@ class MyApp extends StatelessWidget {
               name: "search",
               builder: (context, state) {
                 return ChangeNotifierProvider(
-                    create: (_) => SearchViewController(),
+                    create: (_) => SearchViewController(
+                          searchService: context.read<ISearchService>(),
+                        ),
                     child: const SearchView());
               }),
           GoRoute(
@@ -92,7 +127,9 @@ class MyApp extends StatelessWidget {
               name: "bookmark",
               builder: (context, state) {
                 return ChangeNotifierProvider(
-                  create: (_) => BookmarkViewController(),
+                  create: (_) => BookmarkViewController(
+                    bookmarkService: context.read<IBookmarkService>()
+                  ),
                   child: const BookmarkView(),
                 );
               }
@@ -105,12 +142,14 @@ class MyApp extends StatelessWidget {
               final movieID = int.parse(state.pathParameters['id']!);
               final movieTitle = state.uri.queryParameters['title'];
               return ChangeNotifierProvider(
-                    create: (_) => MovieDetailsController(
-                      movieID: movieID, 
-                      movieTitle: movieTitle!
-                    ),
-                    child: const MovieDetailsView(),
-                  );
+                create: (_) => MovieDetailsController(
+                  bookmarkSerivce: context.read<IBookmarkService>(),
+                  movieService: context.read<IMovieService>(),
+                  movieID: movieID,
+                  movieTitle: movieTitle ?? "",
+                ),
+                child: const MovieDetailsView(),
+              );
             },
           ),
           GoRoute(
@@ -120,12 +159,14 @@ class MyApp extends StatelessWidget {
               final peopleID = int.parse(state.pathParameters['id']!);
               final peopleName = state.uri.queryParameters['name'];
               return ChangeNotifierProvider(
-                    create: (_) => PeopleDetailsController(
-                      peopleID: peopleID,
-                      peopleName: peopleName ?? "",
-                    ),
-                    child: const PeopleDetailsView(),
-                  );
+                create: (_) => PeopleDetailsController(
+                  bookmarkService: context.read<IBookmarkService>(),
+                  peopleService: context.read<IPeopleService>(),
+                  peopleID: peopleID,
+                  peopleName: peopleName ?? "",
+                ),
+                child: const PeopleDetailsView(),
+              );
             },
           ),
           GoRoute(
@@ -135,12 +176,14 @@ class MyApp extends StatelessWidget {
               final tvSeriesID = int.parse(state.pathParameters['id']!);
               final tvSeriesName = state.uri.queryParameters['name'];
               return ChangeNotifierProvider(
-                    create: (_) => TvSeriesDetailsController(
-                      tvSeriesID: tvSeriesID,
-                      tvSeriesName: tvSeriesName ?? "",
-                    ),
-                    child: const TvSeriesDetailsView(),
-                  );
+                create: (_) => TvSeriesDetailsController(
+                  bookmarkService: context.read<IBookmarkService>(), 
+                  tvSeriesService: context.read<ITvSeriesService>(),
+                  tvSeriesID: tvSeriesID,
+                  tvSeriesName: tvSeriesName ?? "",
+                ),
+                child: const TvSeriesDetailsView(),
+              );
             },
             routes: [
               GoRoute(
@@ -153,6 +196,7 @@ class MyApp extends StatelessWidget {
                       int.parse(state.uri.queryParameters['seasons']!);
                   return ChangeNotifierProvider(
                     create: (_) => TvSeriesSeasonsController(
+                      tvSeriesService: context.read<ITvSeriesService>(),
                       tvSeriesID: tvSeriesID,
                       numberOfSeasons: numberOfSeasons,
                     ),

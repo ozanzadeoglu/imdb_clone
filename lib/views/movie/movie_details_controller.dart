@@ -7,8 +7,8 @@ import 'package:imdb_app/services/bookmark/bookmark_service.dart';
 import 'package:imdb_app/services/movie_service.dart';
 
 class MovieDetailsController extends ChangeNotifier {
-  final IMovieService _movieService = MovieService();
-  final BookmarkService _bookmarkService = BookmarkService();
+  final IMovieService _movieService;
+  final IBookmarkService _bookmarkService;
 
   final int movieID;
   final String movieTitle;
@@ -25,15 +25,22 @@ class MovieDetailsController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isBookmarked => _isBookmarked;
 
-  MovieDetailsController({required this.movieID, required this.movieTitle}) {
+  MovieDetailsController(
+      {required this.movieID,
+      required this.movieTitle,
+      required movieService,
+      required bookmarkSerivce})
+      : _movieService = movieService,
+        _bookmarkService = bookmarkSerivce 
+  {
     _isBookmarked = _checkIfBookmarked();
     _fetchPageData();
   }
 
-  void addOrRemoveBookmark(){
-    if(!_isBookmarked){
+  void addOrRemoveBookmark() {
+    if (!_isBookmarked) {
       _addBookmark();
-    }else{
+    } else {
       _removeBookmark();
     }
     _isBookmarked = _checkIfBookmarked();
@@ -41,10 +48,11 @@ class MovieDetailsController extends ChangeNotifier {
   }
 
   //below functions are file private, only functions and variables above will be used in view.
-  
+
   void _addBookmark() {
     if (_movie != null) {
-      final bookmarkedMovie = BookmarkedMovie(bookmarkedDate: DateTime.now(), movie: _movie);
+      final bookmarkedMovie =
+          BookmarkedMovie(bookmarkedDate: DateTime.now(), movie: _movie);
       _bookmarkService.putItem(bookmarkedMovie.id, bookmarkedMovie);
     }
   }
@@ -54,7 +62,7 @@ class MovieDetailsController extends ChangeNotifier {
   }
 
   bool _checkIfBookmarked() {
-    return _bookmarkService.box.keys.contains("${MediaTypes.movie.value}_$movieID");
+    return _bookmarkService.isBookmarked(movieID: "${MediaTypes.movie.value}_$movieID");
   }
 
   void _fetchPageData() async {

@@ -4,7 +4,6 @@ import 'package:imdb_app/models/simple_credit.dart';
 import 'package:imdb_app/models/simple_tv_series_episode.dart';
 import 'package:imdb_app/models/tv_series.dart';
 import 'package:imdb_app/services/credits_mixin.dart';
-import 'package:imdb_app/services/dio_client.dart';
 
 abstract class ITvSeriesService {
   Future<TVSeries?> fetchTVSeriesDetailsWithID({required int tvSeriesID});
@@ -13,7 +12,9 @@ abstract class ITvSeriesService {
 }
 
 class TvSeriesService with CreditsMixin implements ITvSeriesService {
-  final Dio _dio = DioClient.instance.dio;
+  final Dio _dio;
+
+  TvSeriesService(this._dio);
 
   @override
   Future<TVSeries?> fetchTVSeriesDetailsWithID(

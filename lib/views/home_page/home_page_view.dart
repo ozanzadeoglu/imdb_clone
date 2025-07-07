@@ -11,6 +11,7 @@ import 'package:imdb_app/services/trending_service.dart';
 import 'package:imdb_app/utility/navigation_utils.dart';
 import 'package:kartal/kartal.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 part "widgets/_media_showcase_slider.dart";
 
@@ -35,17 +36,17 @@ class _HomePageViewState extends State<HomePageView> {
   }
 
   Future<List<SimpleMedia>?> _fetchTrending() async {
-    TrendingService service = TrendingService();
+    ITrendingService service = context.read<ITrendingService>();
     return await service.fetchTrendingMedia(timeWindow: "week");
   }
 
   Future<List<PosterCardMedia>?> _fetchTrendingDay() async {
-    TrendingService service = TrendingService();
+    ITrendingService service = context.read<ITrendingService>();
     return await service.fetchTrendingAsPosterCard(timeWindow: "day");
   }
 
   Future<List<PosterCardMedia>?> _fetchPopularPeople() async {
-    IPeopleService service = PeopleService();
+    IPeopleService service = context.read<IPeopleService>();
     return await service.fetchPopularPeople();
   }
 

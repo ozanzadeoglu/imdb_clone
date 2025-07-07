@@ -1,12 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:imdb_app/models/simple_media.dart';
 import 'package:imdb_app/models/poster_card_media.dart';
-import 'package:imdb_app/services/dio_client.dart';
 
-class TrendingService {
-    final Dio _dio = DioClient.instance.dio;
-     
+abstract class ITrendingService{
+  Future<List<SimpleMedia>?> fetchTrendingMedia({required String timeWindow});
+  Future<List<PosterCardMedia>?> fetchTrendingAsPosterCard({required String timeWindow});
+}
+
+class TrendingService implements ITrendingService {
+    final Dio _dio;
+    
+    TrendingService(this._dio);
+
     //nullable
+    @override
     Future<List<SimpleMedia>?> fetchTrendingMedia({required String timeWindow}) async {//time_window can be day or week
       try{
         Response response = await _dio.get("trending/all/$timeWindow");
@@ -24,6 +31,7 @@ class TrendingService {
       }
       return null;
     }
+    @override
     Future<List<PosterCardMedia>?> fetchTrendingAsPosterCard({required String timeWindow}) async {//time_window can be day or week
       try{
         Response response = await _dio.get("trending/all/$timeWindow");

@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:imdb_app/enums/media_types.dart';
 import 'package:imdb_app/models/people.dart';
 import 'package:imdb_app/models/poster_card_media.dart';
-import 'package:imdb_app/services/dio_client.dart';
 
 abstract class IPeopleService {
   Future<People?> fetchPeopleDetailsWithID({required int peopleID});
@@ -12,7 +11,9 @@ abstract class IPeopleService {
 }
 
 class PeopleService implements IPeopleService {
-  final Dio _dio = DioClient.instance.dio;
+  final Dio _dio;
+
+  PeopleService(this._dio);
 
   @override
   Future<People?> fetchPeopleDetailsWithID({required int peopleID}) async {

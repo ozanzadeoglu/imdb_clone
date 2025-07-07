@@ -15,9 +15,11 @@ class SearchViewController with ChangeNotifier {
   List<SimpleListTileMedia>? listTileMediaList = [];
   List<SimpleListTileMedia>? researchesList = [];
 
-  final _service = SearchService();
+  final ISearchService _service ;
 
-  SearchViewController() {
+  SearchViewController({required searchService})
+    : _service = searchService
+   {
     manager = ListTileMediaManager();
     fetchRecentSearches();
     textFieldFocusNode = FocusNode();

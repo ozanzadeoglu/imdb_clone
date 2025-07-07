@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:imdb_app/models/search/simple_list_tile_media.dart';
-import 'package:imdb_app/services/dio_client.dart';
 
+abstract class ISearchService{
+  Future<List<SimpleListTileMedia>?> fetchMultiSearch(String query);
+}
 
+class SearchService implements ISearchService{
+  final Dio _dio;
 
-class SearchService {
-  final Dio _dio = DioClient.instance.dio;
+  SearchService(this._dio);
 
+  @override
   Future<List<SimpleListTileMedia>?> fetchMultiSearch(String query) async {
   try {
     Response response = await _dio.get(
@@ -36,28 +40,4 @@ class SearchService {
   return null;
 }
 
-
-  // Future<List<SimpleListTileMedia>?> fetchMultiSearch(String query) async {
-  //   try {
-  //     Response response = await _dio.get(
-  //       "search/multi",
-  //       queryParameters: {"query": query, "page": "1"},
-  //     );
-  //     if (response.statusCode == 200) {
-  //       final resultsList = response.data["results"] as List;
-  //       print(resultsList);
-
-  //       final listTileMediaList = List<SimpleListTileMedia>.from(
-  //         resultsList.map(
-  //           (e) => SimpleListTileMedia.fromJson(e),
-  //         ),
-  //       );
-  //       return listTileMediaList;
-  //     }
-  //     return null;
-  //   } catch (e) {
-  //     print("Error at fetchMultiSearch $e");
-  //   }
-  //   return null;
-  // }
 }

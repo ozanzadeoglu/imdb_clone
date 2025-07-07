@@ -7,8 +7,8 @@ import 'package:imdb_app/services/bookmark/bookmark_service.dart';
 import 'package:imdb_app/services/tv_series_service.dart';
 
 class TvSeriesDetailsController extends ChangeNotifier {
-  final ITvSeriesService _tvSeriesservice = TvSeriesService();
-  final BookmarkService _bookmarkService = BookmarkService();
+  final ITvSeriesService _tvSeriesservice;
+  final IBookmarkService _bookmarkService;
 
   final int tvSeriesID;
   final String tvSeriesName;
@@ -25,8 +25,13 @@ class TvSeriesDetailsController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isBookmarked => _isBookmarked;
 
-  TvSeriesDetailsController(
-      {required this.tvSeriesID, required this.tvSeriesName}) {
+  TvSeriesDetailsController({
+    required this.tvSeriesID,
+    required this.tvSeriesName,
+    required tvSeriesService,
+    required bookmarkService,
+  })  : _tvSeriesservice = tvSeriesService,
+        _bookmarkService = bookmarkService {
     _isBookmarked = _checkIfBookmarked();
     _fetchPageData();
   }
@@ -56,8 +61,7 @@ class TvSeriesDetailsController extends ChangeNotifier {
   }
 
   bool _checkIfBookmarked() {
-    return _bookmarkService.box.keys
-        .contains("${MediaTypes.tv.value}_$tvSeriesID");
+    return _bookmarkService.isBookmarked(movieID: "${MediaTypes.tv.value}_$tvSeriesID");
   }
 
   void _fetchPageData() async {
